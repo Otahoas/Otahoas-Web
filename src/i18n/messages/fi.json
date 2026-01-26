@@ -1,0 +1,33 @@
+{
+  "common": {
+    "home": "Etusivu",
+    "search": "Haku",
+    "searchPlaceholder": "Hae...",
+    "noResults": "Ei tuloksia",
+    "loading": "Ladataan...",
+    "readMore": "Lue lisää",
+    "backToHome": "Takaisin etusivulle",
+    "pageNotFound": "Sivua ei löytynyt",
+    "pageNotFoundDescription": "Hakemaasi sivua ei löytynyt."
+  },
+  "header": {
+    "menu": "Valikko",
+    "closeMenu": "Sulje valikko"
+  },
+  "footer": {
+    "copyright": "© {year} OtaHoas. Kaikki oikeudet pidätetään."
+  },
+  "language": {
+    "switchTo": "Vaihda kieleksi",
+    "fi": "Suomi",
+    "en": "English"
+  },
+  "posts": {
+    "title": "Ajankohtaista",
+    "noPosts": "Ei julkaisuja",
+    "publishedAt": "Julkaistu"
+  },
+  "metadata": {
+    "defaultDescription": "Otaniemen asukastoimikunta - kerhohuoneet ja yhteiset tilat"
+  }
+}

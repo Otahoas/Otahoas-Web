@@ -1,0 +1,67 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - payload_secret
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: payload
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U payload']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+      secrets:
+        - payload_secret
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -lc "pnpm payload migrate && pnpm seed"
+    profiles: ["tools"]
+secrets:
+  payload_secret:
+    environment: PAYLOAD_SECRET
+
+volumes:
+  postgres_data:
+    name: otahoas_postgres_data_prod

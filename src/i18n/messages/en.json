@@ -1,0 +1,33 @@
+{
+  "common": {
+    "home": "Home",
+    "search": "Search",
+    "searchPlaceholder": "Search...",
+    "noResults": "No results",
+    "loading": "Loading...",
+    "readMore": "Read more",
+    "backToHome": "Back to home",
+    "pageNotFound": "Page not found",
+    "pageNotFoundDescription": "The page you are looking for could not be found."
+  },
+  "header": {
+    "menu": "Menu",
+    "closeMenu": "Close menu"
+  },
+  "footer": {
+    "copyright": "© {year} OtaHoas. All rights reserved."
+  },
+  "language": {
+    "switchTo": "Switch language to",
+    "fi": "Suomi",
+    "en": "English"
+  },
+  "posts": {
+    "title": "News",
+    "noPosts": "No posts",
+    "publishedAt": "Published"
+  },
+  "metadata": {
+    "defaultDescription": "Otaniemi Residents' Committee - club rooms and shared spaces"
+  }
+}

@@ -1,0 +1,32 @@
+services:
+  # Development service - uses volume mounts for hot reload
+  dev:
+    image: node:24-alpine
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+      - ../otahoas_vanha:/home/node/otahoas_vanha
+    working_dir: /home/node/app/
+    command: sh -c "corepack enable pnpm && pnpm install && pnpm dev"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: payload
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
+    name: otahoas_postgres_data
+  node_modules:
