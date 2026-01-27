@@ -75,14 +75,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     en: "Otaniemi Residents' Committee - club rooms and shared spaces",
   }
 
+  const description = descriptions[locale] || descriptions.fi
+
   return {
     title: {
       default: 'OtaHoas',
       template: '%s | OtaHoas',
     },
-    description: descriptions[locale] || descriptions.fi,
+    description,
     metadataBase: new URL(getServerSideURL()),
-    openGraph: mergeOpenGraph(),
+    openGraph: mergeOpenGraph(undefined, description),
     twitter: {
       card: 'summary_large_image',
     },

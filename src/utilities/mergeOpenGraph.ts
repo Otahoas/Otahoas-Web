@@ -1,22 +1,23 @@
 import type { Metadata } from 'next'
 import { getServerSideURL } from './getURL'
 
-const defaultOpenGraph: Metadata['openGraph'] = {
-  type: 'website',
-  description: 'OtaHoas',
+const getDefaultOpenGraph = (description?: string) => ({
+  type: 'website' as const,
+  description: description || 'OtaHoas',
   images: [
     {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
+      url: `${getServerSideURL()}/otahoas.png`,
     },
   ],
   siteName: 'OtaHoas',
   title: 'OtaHoas',
-}
+})
 
-export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'] => {
+export const mergeOpenGraph = (og?: Metadata['openGraph'], description?: string): Metadata['openGraph'] => {
+  const defaultOpenGraph = getDefaultOpenGraph(description)
   return {
     ...defaultOpenGraph,
     ...og,
-    images: og?.images ? og.images : defaultOpenGraph.images,
+    images: og?.images ?? defaultOpenGraph.images,
   }
 }
