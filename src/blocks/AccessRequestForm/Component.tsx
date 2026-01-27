@@ -324,9 +324,11 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
   )
 
   const inputClassName =
-    'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-  const labelClassName = 'block text-sm font-medium text-gray-700 mb-1'
-  const errorClassName = 'text-red-600 text-sm mt-1'
+    'w-full px-3 py-2 border-2 border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-input text-foreground placeholder:text-muted-foreground'
+  const selectClassName =
+    'w-full px-3 py-2 border-2 border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-input text-foreground [&>option]:bg-input [&>option]:text-foreground [&>optgroup]:bg-card [&>optgroup]:text-foreground [&>optgroup]:font-semibold'
+  const labelClassName = 'block text-sm font-medium text-foreground mb-1'
+  const errorClassName = 'text-red-500 text-sm mt-1'
 
   return (
     <div className="container my-16">
@@ -343,7 +345,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           {rulesPageLink && (
             <a
               href={rulesPageLink}
-              className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-card hover:bg-muted rounded-lg text-sm font-medium transition-colors"
             >
               {language === 'fi' ? 'Säännöt' : 'Rules'}
             </a>
@@ -351,7 +353,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           {spacesInfoLink && (
             <a
               href={spacesInfoLink}
-              className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-card hover:bg-muted rounded-lg text-sm font-medium transition-colors"
             >
               {language === 'fi' ? 'Tilat' : 'Spaces'}
             </a>
@@ -359,7 +361,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           {calendarLink && (
             <a
               href={calendarLink}
-              className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-card hover:bg-muted rounded-lg text-sm font-medium transition-colors"
             >
               {language === 'fi' ? 'Kalenteri' : 'Calendar'}
             </a>
@@ -372,8 +374,8 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
         <div
           className={`mb-8 p-4 rounded-lg ${
             submitResult.success
-              ? 'bg-green-50 border border-green-200 text-green-800'
-              : 'bg-red-50 border border-red-200 text-red-800'
+              ? 'bg-success border border-green-600/30 text-foreground'
+              : 'bg-error border border-red-600/30 text-foreground'
           }`}
         >
           <h3 className="font-bold mb-2">
@@ -396,16 +398,16 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
               {t.selectTarget} *
             </label>
             {loadingTargets ? (
-              <p className="text-gray-500">{t.loadingTargets}</p>
+              <p className="text-muted-foreground">{t.loadingTargets}</p>
             ) : targets.length === 0 ? (
-              <p className="text-gray-500">{t.noTargets}</p>
+              <p className="text-muted-foreground">{t.noTargets}</p>
             ) : (
               <select
                 id="targetId"
                 name="targetId"
                 value={formData.targetId}
                 onChange={handleChange}
-                className={inputClassName}
+                className={selectClassName}
               >
                 <option value="">{t.selectTarget}</option>
                 {Object.entries(groupedTargets).map(([category, categoryTargets]) => (
@@ -625,7 +627,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           <button
             type="submit"
             disabled={isSubmitting || loadingTargets}
-            className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? t.submitting : t.submit}
           </button>
