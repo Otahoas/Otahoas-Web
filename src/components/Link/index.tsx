@@ -43,8 +43,8 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
         }`
       : url
 
-  // Prefix internal links with locale
-  if (href && locale && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+  // Prefix internal links with locale (except /admin which is not localized)
+  if (href && locale && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('/admin')) {
     // Ensure href starts with /
     const cleanHref = href.startsWith('/') ? href : `/${href}`
     href = `/${locale}${cleanHref}`

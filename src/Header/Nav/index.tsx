@@ -7,11 +7,17 @@ import type { Locale } from '@/i18n/config'
 
 import { CMSLink } from '@/components/Link'
 
-export const HeaderNav: React.FC<{ data: HeaderType; locale: Locale }> = ({ data, locale }) => {
+interface HeaderNavProps {
+  data: HeaderType
+  locale: Locale
+  mobile?: boolean
+}
+
+export const HeaderNav: React.FC<HeaderNavProps> = ({ data, locale, mobile }) => {
   const navItems = data?.navItems || []
 
   return (
-    <nav className="flex gap-3 items-center">
+    <nav className={mobile ? 'flex flex-col gap-3' : 'flex gap-3 items-center'}>
       {navItems.map(({ link }, i) => {
         return <CMSLink key={i} {...link} appearance="link" locale={locale} />
       })}
