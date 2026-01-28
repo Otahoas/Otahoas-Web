@@ -214,6 +214,7 @@ export interface Page {
     | AccessRequestFormBlock
     | CommitteeBlock
     | ContactInfoBlock
+    | TilatBlock
   )[];
   meta?: {
     title?: string | null;
@@ -929,6 +930,41 @@ export interface ContactInfoBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TilatBlock".
+ */
+export interface TilatBlock {
+  spaces?:
+    | {
+        /**
+         * Optional. If not provided, address will be used as name
+         */
+        name?: string | null;
+        address: string;
+        capacity?: string | null;
+        additionalInfo?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'tilat';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "reservation-targets".
  */
 export interface ReservationTarget {
@@ -1315,6 +1351,7 @@ export interface PagesSelect<T extends boolean = true> {
         accessRequestForm?: T | AccessRequestFormBlockSelect<T>;
         committee?: T | CommitteeBlockSelect<T>;
         contactInfo?: T | ContactInfoBlockSelect<T>;
+        tilat?: T | TilatBlockSelect<T>;
       };
   meta?:
     | T
@@ -1471,6 +1508,23 @@ export interface ContactInfoBlockSelect<T extends boolean = true> {
     | {
         name?: T;
         url?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TilatBlock_select".
+ */
+export interface TilatBlockSelect<T extends boolean = true> {
+  spaces?:
+    | T
+    | {
+        name?: T;
+        address?: T;
+        capacity?: T;
+        additionalInfo?: T;
         id?: T;
       };
   id?: T;

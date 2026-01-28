@@ -11,6 +11,7 @@ import { CalendarEmbed } from '../../blocks/CalendarEmbed/config'
 import { AccessRequestForm } from '../../blocks/AccessRequestForm/config'
 import { Committee } from '../../blocks/Committee/config'
 import { ContactInfo } from '../../blocks/ContactInfo/config'
+import { Tilat } from '../../blocks/Tilat/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -77,7 +78,6 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              localized: true,
               blocks: [
                 CallToAction,
                 Content,
@@ -88,6 +88,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 AccessRequestForm,
                 Committee,
                 ContactInfo,
+                Tilat,
               ],
               required: true,
               admin: {
