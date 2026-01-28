@@ -27,6 +27,9 @@
     "noPosts": "No posts",
     "publishedAt": "Published"
   },
+  "spaces": {
+    "capacity": "Capacity"
+  },
   "metadata": {
     "defaultDescription": "Otaniemi Residents' Committee - club rooms and shared spaces"
   }

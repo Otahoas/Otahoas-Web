@@ -27,6 +27,9 @@
     "noPosts": "Ei julkaisuja",
     "publishedAt": "Julkaistu"
   },
+  "spaces": {
+    "capacity": "Kapasiteetti"
+  },
   "metadata": {
     "defaultDescription": "Otaniemen asukastoimikunta - kerhohuoneet ja yhteiset tilat"
   }
