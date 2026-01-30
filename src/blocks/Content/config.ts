@@ -36,11 +36,12 @@ const columnFields: Field[] = [
   {
     name: 'richText',
     type: 'richText',
+    localized: true,
     editor: lexicalEditor({
       features: ({ rootFeatures }) => {
         return [
           ...rootFeatures,
-          HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
+          HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
           FixedToolbarFeature(),
           InlineToolbarFeature(),
         ]
@@ -54,6 +55,7 @@ const columnFields: Field[] = [
   },
   link({
     overrides: {
+      localized: true,
       admin: {
         condition: (_data, siblingData) => {
           return Boolean(siblingData?.enableLink)
