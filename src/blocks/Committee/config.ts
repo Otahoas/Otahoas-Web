@@ -12,11 +12,13 @@ export const Committee: Block = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
       defaultValue: 'Toimikunta',
     },
     {
       name: 'description',
       type: 'textarea',
+      localized: true,
       admin: {
         description: 'Optional description shown above the member list',
       },

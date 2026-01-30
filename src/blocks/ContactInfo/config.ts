@@ -12,6 +12,7 @@ export const ContactInfo: Block = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
       defaultValue: 'Yhteystiedot',
     },
     {

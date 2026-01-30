@@ -13,7 +13,8 @@ export const CalendarEmbed: Block = {
       type: 'text',
       required: true,
       admin: {
-        description: 'Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)',
+        description:
+          'Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)',
       },
     },
     {
@@ -28,6 +29,7 @@ export const CalendarEmbed: Block = {
       name: 'language',
       type: 'select',
       defaultValue: 'fi',
+      localized: true,
       options: [
         { label: 'Suomi', value: 'fi' },
         { label: 'English', value: 'en' },
@@ -36,6 +38,7 @@ export const CalendarEmbed: Block = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
       admin: {
         description: 'Optional title shown above the calendar',
       },

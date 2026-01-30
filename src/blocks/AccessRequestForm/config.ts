@@ -19,6 +19,7 @@ export const AccessRequestForm: Block = {
       name: 'language',
       type: 'select',
       defaultValue: 'fi',
+      localized: true,
       required: true,
       options: [
         { label: 'Suomi', value: 'fi' },
@@ -29,6 +30,7 @@ export const AccessRequestForm: Block = {
       name: 'introContent',
       type: 'richText',
       label: 'Introduction Content',
+      localized: true,
       admin: {
         description: 'Content shown above the form (rules, guidelines, etc.)',
       },
@@ -68,6 +70,7 @@ export const AccessRequestForm: Block = {
       name: 'confirmationMessage',
       type: 'richText',
       label: 'Confirmation Message',
+      localized: true,
       admin: {
         description: 'Message shown after successful submission',
       },
