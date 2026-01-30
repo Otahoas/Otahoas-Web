@@ -8,6 +8,8 @@
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/seed.ts",
     "seed:clean": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/seed.ts --clean",
     "seed:home": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/seed.ts --home-only",
+    "export:pages-and-media": "tsx scripts/local_migration/export-seed.ts",
+    "seed:pages-and-media": "tsx scripts/local_migration/import-seed.ts",
     "db:reset": "tsx scripts/db-reset.ts",
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
