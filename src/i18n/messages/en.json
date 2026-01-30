@@ -28,7 +28,8 @@
     "publishedAt": "Published"
   },
   "spaces": {
-    "capacity": "Capacity"
+    "capacity": "Capacity",
+    "moreInfo": "More information and pictures →"
   },
   "metadata": {
     "defaultDescription": "Otaniemi Residents' Committee - club rooms and shared spaces"

@@ -11,10 +11,22 @@ export const Tilat: Block = {
   interfaceName: 'TilatBlock',
   fields: [
     {
+      name: 'title',
+      type: 'text',
+      label: 'Title',
+      localized: true,
+    },
+    {
       name: 'spaces',
       type: 'array',
       label: 'Spaces',
       fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Image',
+        },
         {
           name: 'name',
           type: 'text',
@@ -29,7 +41,13 @@ export const Tilat: Block = {
           type: 'text',
           required: true,
           label: 'Address',
-          localized: true,
+        },
+        {
+          name: 'linkedPage',
+          type: 'relationship',
+          relationTo: 'pages',
+          label: 'Linked page',
+          maxDepth: 1,
         },
         {
           name: 'capacity',
