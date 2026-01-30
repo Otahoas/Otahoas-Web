@@ -215,6 +215,7 @@ export interface Page {
     | CommitteeBlock
     | ContactInfoBlock
     | TilatBlock
+    | ImageScrollerBlock
   )[];
   meta?: {
     title?: string | null;
@@ -976,6 +977,21 @@ export interface TilatBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageScrollerBlock".
+ */
+export interface ImageScrollerBlock {
+  displayMode?: ('grid' | 'carousel') | null;
+  images: {
+    image: number | Media;
+    caption?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageScroller';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "reservation-targets".
  */
 export interface ReservationTarget {
@@ -1371,6 +1387,7 @@ export interface PagesSelect<T extends boolean = true> {
         committee?: T | CommitteeBlockSelect<T>;
         contactInfo?: T | ContactInfoBlockSelect<T>;
         tilat?: T | TilatBlockSelect<T>;
+        imageScroller?: T | ImageScrollerBlockSelect<T>;
       };
   meta?:
     | T
@@ -1549,6 +1566,22 @@ export interface TilatBlockSelect<T extends boolean = true> {
         linkedPage?: T;
         capacity?: T;
         additionalInfo?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageScrollerBlock_select".
+ */
+export interface ImageScrollerBlockSelect<T extends boolean = true> {
+  displayMode?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
         id?: T;
       };
   id?: T;

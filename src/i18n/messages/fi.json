@@ -31,6 +31,9 @@
     "capacity": "Kapasiteetti",
     "moreInfo": "Lisätietoja ja kuvia tilasta →"
   },
+  "imageScroller": {
+    "title": "Kuvia"
+  },
   "metadata": {
     "defaultDescription": "Otaniemen asukastoimikunta - kerhohuoneet ja yhteiset tilat"
   }
