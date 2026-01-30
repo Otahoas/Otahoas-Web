@@ -933,13 +933,16 @@ export interface ContactInfoBlock {
  * via the `definition` "TilatBlock".
  */
 export interface TilatBlock {
+  title?: string | null;
   spaces?:
     | {
+        image?: (number | null) | Media;
         /**
          * Optional. If not provided, address will be used as name
          */
         name?: string | null;
         address: string;
+        linkedPage?: (number | null) | Page;
         capacity?: string | null;
         additionalInfo?: {
           root: {
@@ -1518,11 +1521,14 @@ export interface ContactInfoBlockSelect<T extends boolean = true> {
  * via the `definition` "TilatBlock_select".
  */
 export interface TilatBlockSelect<T extends boolean = true> {
+  title?: T;
   spaces?:
     | T
     | {
+        image?: T;
         name?: T;
         address?: T;
+        linkedPage?: T;
         capacity?: T;
         additionalInfo?: T;
         id?: T;
