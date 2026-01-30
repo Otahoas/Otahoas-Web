@@ -29,3 +29,6 @@ tsconfig.tsbuildinfo
 # IDE/tool configs (personal settings)
 .claude/
 .cursor/
+
+#Automatically updating file.
+package-lock.json
