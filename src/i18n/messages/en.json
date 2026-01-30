@@ -31,6 +31,9 @@
     "capacity": "Capacity",
     "moreInfo": "More information and pictures →"
   },
+  "imageScroller": {
+    "title": "Pictures"
+  },
   "metadata": {
     "defaultDescription": "Otaniemi Residents' Committee - club rooms and shared spaces"
   }
