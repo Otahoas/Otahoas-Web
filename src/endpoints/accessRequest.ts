@@ -333,3 +333,41 @@ export const reservationTargetsHandler: PayloadHandler = async (req) => {
     return Response.json({ error: 'Failed to fetch targets' }, { status: 500 })
   }
 }
+
+// GET handler for fetching calendar IDs from active reservation targets
+export const reservationTargetCalendarsHandler: PayloadHandler = async (req) => {
+  const { payload } = req
+
+  try {
+    const targets = await payload.find({
+      collection: 'reservation-targets',
+      where: {
+        and: [
+          { active: { equals: true } },
+          { googleCalendarId: { exists: true } },
+        ],
+      },
+      sort: 'sortOrder',
+      limit: 100,
+    })
+
+    // Filter out targets without calendar IDs and map to calendar data
+    const calendars = targets.docs
+      .filter((target) => target.googleCalendarId)
+      .map((target) => ({
+        googleCalendarId: target.googleCalendarId,
+        calendarColor: target.calendarColor || '#3F51B5',
+        labelFi: target.labelFi,
+        labelEn: target.labelEn,
+      }))
+
+    return Response.json({
+      calendars,
+    })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    payload.logger.error(`Failed to fetch reservation target calendars: ${errorMessage}`)
+
+    return Response.json({ error: 'Failed to fetch calendars' }, { status: 500 })
+  }
+}

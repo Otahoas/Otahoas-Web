@@ -79,6 +79,22 @@ export const ReservationTargets: CollectionConfig = {
         description: 'Lower numbers appear first in the dropdown',
       },
     },
+    {
+      name: 'googleCalendarId',
+      type: 'text',
+      admin: {
+        description:
+          'Google Calendar ID (e.g., "abc123xyz@group.calendar.google.com"). Get from Google Calendar settings → Integrate calendar.',
+      },
+    },
+    {
+      name: 'calendarColor',
+      type: 'text',
+      defaultValue: '#3F51B5',
+      admin: {
+        description: 'Calendar display color in hex format (e.g., "#3F51B5")',
+      },
+    },
   ],
   timestamps: true,
 }

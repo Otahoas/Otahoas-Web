@@ -16,7 +16,11 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
-import { accessRequestHandler, reservationTargetsHandler } from './endpoints/accessRequest'
+import {
+  accessRequestHandler,
+  reservationTargetsHandler,
+  reservationTargetCalendarsHandler,
+} from './endpoints/accessRequest'
 import { migrateOldSite } from './endpoints/seed/migrate-old-site'
 
 const filename = fileURLToPath(import.meta.url)
@@ -99,6 +103,11 @@ export default buildConfig({
       path: '/reservation-targets',
       method: 'get',
       handler: reservationTargetsHandler,
+    },
+    {
+      path: '/reservation-target-calendars',
+      method: 'get',
+      handler: reservationTargetCalendarsHandler,
     },
     {
       path: '/migrate-old-site',

@@ -799,9 +799,17 @@ export interface Form {
  */
 export interface CalendarEmbedBlock {
   /**
+   * If checked, combines all Google calendars from active Reservation Targets instead of using a single URL
+   */
+  useCombinedCalendars?: boolean | null;
+  /**
    * Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)
    */
-  calendarUrl: string;
+  calendarUrl?: string | null;
+  /**
+   * Public events Google Calendar ID (e.g., example@group.calendar.google.com). This calendar will be combined with reservation target calendars.
+   */
+  publicEventsCalendarId?: string | null;
   /**
    * Calendar height in pixels
    */
@@ -958,6 +966,14 @@ export interface ReservationTarget {
    * Lower numbers appear first in the dropdown
    */
   sortOrder?: number | null;
+  /**
+   * Google Calendar ID (e.g., "abc123xyz@group.calendar.google.com"). Get from Google Calendar settings → Integrate calendar.
+   */
+  googleCalendarId?: string | null;
+  /**
+   * Calendar display color in hex format (e.g., "#3F51B5")
+   */
+  calendarColor?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1419,7 +1435,9 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "CalendarEmbedBlock_select".
  */
 export interface CalendarEmbedBlockSelect<T extends boolean = true> {
+  useCombinedCalendars?: T;
   calendarUrl?: T;
+  publicEventsCalendarId?: T;
   height?: T;
   language?: T;
   title?: T;
@@ -1656,6 +1674,8 @@ export interface ReservationTargetsSelect<T extends boolean = true> {
   category?: T;
   active?: T;
   sortOrder?: T;
+  googleCalendarId?: T;
+  calendarColor?: T;
   updatedAt?: T;
   createdAt?: T;
 }
