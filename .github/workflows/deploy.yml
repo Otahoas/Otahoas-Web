@@ -18,7 +18,8 @@ jobs:
           script: |
             cd /home/otahoas/Otahoas-Web/
 
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
 
             # Build new image while old container still runs
             docker compose -f docker-compose.prod.yml build app migrate
