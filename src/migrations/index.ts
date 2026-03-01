@@ -1,5 +1,6 @@
 import * as migration_20260122_142223 from './20260122_142223';
 import * as migration_20260129_231731_add_google_calendar_fields from './20260129_231731_add_google_calendar_fields';
+import * as migration_20260301_add_public_events_calendar_id from './20260301_add_public_events_calendar_id';
 
 export const migrations = [
   {
@@ -10,6 +11,11 @@ export const migrations = [
   {
     up: migration_20260129_231731_add_google_calendar_fields.up,
     down: migration_20260129_231731_add_google_calendar_fields.down,
-    name: '20260129_231731_add_google_calendar_fields'
+    name: '20260129_231731_add_google_calendar_fields',
+  },
+  {
+    up: migration_20260301_add_public_events_calendar_id.up,
+    down: migration_20260301_add_public_events_calendar_id.down,
+    name: '20260301_add_public_events_calendar_id',
   },
 ];
