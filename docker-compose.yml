@@ -9,11 +9,15 @@ services:
       - node_modules:/home/node/app/node_modules
       - ../otahoas_vanha:/home/node/otahoas_vanha
     working_dir: /home/node/app/
-    command: sh -c "corepack enable pnpm && pnpm install && pnpm dev"
+    stdin_open: true
+    tty: true
+    command: sh -c "corepack enable pnpm && pnpm install && yes | pnpm dev"
     depends_on:
       - postgres
     env_file:
       - .env
+    environment:
+      - COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
   postgres:
     image: postgres:16-alpine

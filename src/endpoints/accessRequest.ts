@@ -10,6 +10,8 @@ interface AccessRequestBody {
   phone?: string
   telegram?: string
   address?: string
+  association?: string
+  associationName?: string
   startDate: string
   endDate: string
   startTime: string
@@ -17,6 +19,8 @@ interface AccessRequestBody {
   participants?: number
   useType?: string
   details?: string
+  isPublicEvent?: string
+  publicEventName?: string
   [key: string]: unknown
 }
 
@@ -29,7 +33,7 @@ const formatDateFinnish = (dateStr: string): string => {
   return dateStr
 }
 
-const buildEmailContent = (
+const _buildEmailContent = (
   data: AccessRequestBody,
   target: ReservationTarget,
   language: 'fi' | 'en',
@@ -49,6 +53,8 @@ const buildEmailContent = (
           phone: 'Puhelin',
           telegram: 'Telegram',
           address: 'Osoite',
+          association: 'Yhdistys',
+          associationName: 'Yhdistyksen nimi',
           startDate: 'Alkupäivä',
           endDate: 'Loppupäivä',
           startTime: 'Alkuaika',
@@ -56,6 +62,12 @@ const buildEmailContent = (
           participants: 'Osallistujat',
           useType: 'Käyttötarkoitus',
           details: 'Lisätiedot',
+          isPublicEvent: 'Yleinen tilaisuus',
+          publicEventName: 'Tapahtuman nimi',
+          associationYes: 'Kyllä, yhdistyksen puolesta',
+          associationNo: 'Ei, henkilökohtainen varaus',
+          isPublicEventYes: 'Kyllä',
+          isPublicEventNo: 'Ei',
         }
       : {
           title: 'Access Request',
@@ -65,6 +77,8 @@ const buildEmailContent = (
           phone: 'Phone',
           telegram: 'Telegram',
           address: 'Address',
+          association: 'Association',
+          associationName: 'Association name',
           startDate: 'Start Date',
           endDate: 'End Date',
           startTime: 'Start Time',
@@ -72,7 +86,27 @@ const buildEmailContent = (
           participants: 'Participants',
           useType: 'Use Type',
           details: 'Additional Details',
+          isPublicEvent: 'Open event',
+          publicEventName: 'Event name',
+          associationYes: 'Yes, on behalf of an association',
+          associationNo: 'No, individual booking',
+          isPublicEventYes: 'Yes',
+          isPublicEventNo: 'No',
         }
+
+  const associationValue =
+    data.association === 'yes'
+      ? `${labels.associationYes}${data.associationName ? ` — ${data.associationName}` : ''}`
+      : data.association === 'no'
+        ? labels.associationNo
+        : undefined
+
+  const publicEventValue =
+    data.isPublicEvent === 'yes'
+      ? `${labels.isPublicEventYes}${data.publicEventName ? ` — ${data.publicEventName}` : ''}`
+      : data.isPublicEvent === 'no'
+        ? labels.isPublicEventNo
+        : undefined
 
   const rows = [
     { label: labels.target, value: targetLabel },
@@ -81,6 +115,7 @@ const buildEmailContent = (
     { label: labels.phone, value: data.phone },
     { label: labels.telegram, value: data.telegram },
     { label: labels.address, value: data.address },
+    { label: labels.association, value: associationValue },
     { label: labels.startDate, value: formatDateFinnish(data.startDate) },
     { label: labels.endDate, value: formatDateFinnish(data.endDate) },
     { label: labels.startTime, value: data.startTime },
@@ -88,6 +123,7 @@ const buildEmailContent = (
     { label: labels.participants, value: data.participants?.toString() },
     { label: labels.useType, value: data.useType },
     { label: labels.details, value: data.details },
+    { label: labels.isPublicEvent, value: publicEventValue },
   ].filter((row) => row.value)
 
   const html = `
@@ -142,6 +178,12 @@ const buildTelegramMessage = (
   if (data.telegram) lines.push(`<b>Telegram:</b> ${escapeHtml(data.telegram)}`)
   if (data.address) lines.push(`<b>Address:</b> ${escapeHtml(data.address)}`)
 
+  if (data.association === 'yes') {
+    lines.push(`<b>Association:</b> Yes — ${escapeHtml(data.associationName)}`)
+  } else if (data.association === 'no') {
+    lines.push(`<b>Association:</b> No (individual booking)`)
+  }
+
   lines.push('')
   lines.push(`<b>Start Date:</b> ${formatDateFinnish(data.startDate)}`)
   lines.push(`<b>End Date:</b> ${formatDateFinnish(data.endDate)}`)
@@ -155,6 +197,13 @@ const buildTelegramMessage = (
     lines.push('')
     lines.push(`<b>Additional Details:</b>`)
     lines.push(escapeHtml(data.details))
+  }
+
+  if (data.isPublicEvent === 'yes') {
+    lines.push('')
+    lines.push(`<b>Open Event:</b> Yes — ${escapeHtml(data.publicEventName)}`)
+  } else if (data.isPublicEvent === 'no') {
+    lines.push(`<b>Open Event:</b> No`)
   }
 
   return lines.join('\n')

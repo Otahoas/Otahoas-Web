@@ -19,6 +19,8 @@ interface FormData {
   phone: string
   telegram: string
   address: string
+  association: string
+  associationName: string
   startDate: string
   endDate: string
   startTime: string
@@ -26,6 +28,8 @@ interface FormData {
   participants: string
   useType: string
   details: string
+  isPublicEvent: string
+  publicEventName: string
 }
 
 interface FormErrors {
@@ -47,6 +51,16 @@ const translations = {
     participants: 'Osallistujien määrä',
     useType: 'Käyttötarkoitus',
     details: 'Lisätiedot',
+    association: 'Yhdistys *',
+    associationYes: 'Kyllä, yhdistyksen puolesta',
+    associationNo: 'Ei, varaan henkilökohtaisesti',
+    associationName: 'Yhdistyksen nimi',
+    isPublicEvent: 'Yleinen tilaisuus *',
+    isPublicEventDescription:
+      'Täytä tämä kohta vain, jos tilaisuus lisätään varauskalenterin lisäksi OtaHoasin tapahtumakalenteriin, eli se on avoin kaikille asukkaille. Näitä ovat esimerkiksi yhdistysten illanvietot ja peli-illat tai asukastoimikunnan kokoukset. Tapahtuman nimeksi asetetaan se nimi, jonka täytät alle.',
+    isPublicEventYes: 'Kyllä, tilaisuus on avoin kaikille asukkaille',
+    isPublicEventNo: 'Ei ole yleinen tilaisuus',
+    publicEventName: 'Tapahtuman nimi',
     submit: 'Lähetä käyttöpyyntö',
     submitting: 'Lähetetään...',
     required: 'Pakollinen kenttä',
@@ -91,6 +105,16 @@ const translations = {
     participants: 'Number of participants',
     useType: 'Purpose of use',
     details: 'Additional details',
+    association: 'Association *',
+    associationYes: 'Yes, on behalf of an association',
+    associationNo: 'No, booking as an individual',
+    associationName: 'Association name',
+    isPublicEvent: 'Open event *',
+    isPublicEventDescription:
+      "Fill this question only if the event should be added to OtaHoas event calendar in addition to the booking calendar. Such events include, e.g., associations' game nights and tenant committee meetings that are open for every tenant. The event name will be the name that you fill in below.",
+    isPublicEventYes: 'Yes, the event is open to all residents',
+    isPublicEventNo: 'Not an open event',
+    publicEventName: 'Event name',
     submit: 'Send access request',
     submitting: 'Sending...',
     required: 'Required field',
@@ -184,6 +208,8 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
     phone: '',
     telegram: '',
     address: '',
+    association: '',
+    associationName: '',
     startDate: '',
     endDate: '',
     startTime: '',
@@ -191,6 +217,8 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
     participants: '',
     useType: '',
     details: '',
+    isPublicEvent: '',
+    publicEventName: '',
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -252,6 +280,13 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
     } else if (!validateTime(formData.endTime)) {
       newErrors.endTime = t.invalidTime
     }
+    if (!formData.address.trim()) newErrors.address = t.required
+    if (!formData.association) newErrors.association = t.required
+    if (formData.association === 'yes' && !formData.associationName.trim())
+      newErrors.associationName = t.required
+    if (!formData.isPublicEvent) newErrors.isPublicEvent = t.required
+    if (formData.isPublicEvent === 'yes' && !formData.publicEventName.trim())
+      newErrors.publicEventName = t.required
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -290,6 +325,8 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           phone: '',
           telegram: '',
           address: '',
+          association: '',
+          associationName: '',
           startDate: '',
           endDate: '',
           startTime: '',
@@ -297,6 +334,8 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           participants: '',
           useType: '',
           details: '',
+          isPublicEvent: '',
+          publicEventName: '',
         })
       } else {
         setSubmitResult({ success: false, message: data.error || 'An error occurred' })
@@ -494,7 +533,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
 
           <div>
             <label htmlFor="address" className={labelClassName}>
-              {t.address}
+              {t.address} *
             </label>
             <input
               type="text"
@@ -505,6 +544,53 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
               placeholder={t.placeholders.address}
               className={inputClassName}
             />
+            {errors.address && <p className={errorClassName}>{errors.address}</p>}
+          </div>
+
+          {/* Association */}
+          <div>
+            <p className={labelClassName}>{t.association}</p>
+            <div className="flex flex-col gap-2 mt-1">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="association"
+                  value="yes"
+                  checked={formData.association === 'yes'}
+                  onChange={handleChange}
+                  className="accent-blue-600"
+                />
+                {t.associationYes}
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="association"
+                  value="no"
+                  checked={formData.association === 'no'}
+                  onChange={handleChange}
+                  className="accent-blue-600"
+                />
+                {t.associationNo}
+              </label>
+            </div>
+            {errors.association && <p className={errorClassName}>{errors.association}</p>}
+            {formData.association === 'yes' && (
+              <div className="mt-3">
+                <label htmlFor="associationName" className={labelClassName}>
+                  {t.associationName} *
+                </label>
+                <input
+                  type="text"
+                  id="associationName"
+                  name="associationName"
+                  value={formData.associationName}
+                  onChange={handleChange}
+                  className={inputClassName}
+                />
+                {errors.associationName && <p className={errorClassName}>{errors.associationName}</p>}
+              </div>
+            )}
           </div>
 
           {/* Date and Time */}
@@ -621,6 +707,53 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
               rows={4}
               className={inputClassName}
             />
+          </div>
+
+          {/* Public Event */}
+          <div>
+            <p className={labelClassName}>{t.isPublicEvent}</p>
+            <p className="text-sm text-muted-foreground mb-2">{t.isPublicEventDescription}</p>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="isPublicEvent"
+                  value="yes"
+                  checked={formData.isPublicEvent === 'yes'}
+                  onChange={handleChange}
+                  className="accent-blue-600"
+                />
+                {t.isPublicEventYes}
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="isPublicEvent"
+                  value="no"
+                  checked={formData.isPublicEvent === 'no'}
+                  onChange={handleChange}
+                  className="accent-blue-600"
+                />
+                {t.isPublicEventNo}
+              </label>
+            </div>
+            {errors.isPublicEvent && <p className={errorClassName}>{errors.isPublicEvent}</p>}
+            {formData.isPublicEvent === 'yes' && (
+              <div className="mt-3">
+                <label htmlFor="publicEventName" className={labelClassName}>
+                  {t.publicEventName} *
+                </label>
+                <input
+                  type="text"
+                  id="publicEventName"
+                  name="publicEventName"
+                  value={formData.publicEventName}
+                  onChange={handleChange}
+                  className={inputClassName}
+                />
+                {errors.publicEventName && <p className={errorClassName}>{errors.publicEventName}</p>}
+              </div>
+            )}
           </div>
 
           {/* Submit Button */}
