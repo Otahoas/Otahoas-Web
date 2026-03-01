@@ -9,11 +9,29 @@ export const CalendarEmbed: Block = {
   },
   fields: [
     {
+      name: 'useCombinedCalendars',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'If checked, combines all Google calendars from active Reservation Targets instead of using a single URL',
+      },
+    },
+    {
       name: 'calendarUrl',
       type: 'text',
-      required: true,
       admin: {
         description: 'Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)',
+        condition: (_, siblingData) => !siblingData?.useCombinedCalendars,
+      },
+    },
+    {
+      name: 'publicEventsCalendarId',
+      type: 'text',
+      admin: {
+        description:
+          'Public events Google Calendar ID (e.g., example@group.calendar.google.com). This calendar will be combined with reservation target calendars.',
+        condition: (_, siblingData) => siblingData?.useCombinedCalendars,
       },
     },
     {
