@@ -40,6 +40,24 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+      secrets:
+        - payload_secret
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -lc "pnpm payload migrate"
+    restart: "no"
   seed:
     build:
       context: .

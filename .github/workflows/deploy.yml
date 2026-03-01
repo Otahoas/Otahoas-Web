@@ -21,7 +21,10 @@ jobs:
             git pull origin main
 
             # Build new image while old container still runs
-            docker compose -f docker-compose.prod.yml build app
+            docker compose -f docker-compose.prod.yml build app migrate
+
+            # Run database migrations
+            docker compose -f docker-compose.prod.yml run --rm migrate
 
             # Replace containers (minimal downtime)
             docker compose -f docker-compose.prod.yml up -d
