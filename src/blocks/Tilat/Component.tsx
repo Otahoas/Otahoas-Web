@@ -23,7 +23,7 @@ export const TilatBlock: React.FC<TilatBlockType> = (props) => {
         {spaces.map((space, index) => (
           <div
             key={index}
-            className="border rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col"
+            className="border rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col bg-white dark:bg-gray-800"
           >
             {space.image && (
               <div>
@@ -31,16 +31,16 @@ export const TilatBlock: React.FC<TilatBlockType> = (props) => {
               </div>
             )}
             <h3 className="text-xl font-semibold mt-4 px-6">{space.name || space.address}</h3>
-            <p className="text-gray-600 mb-2 px-6">{space.address}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-2 px-6">{space.address}</p>
 
             {space.capacity && (
-              <p className="text-gray-600 mb-2 px-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-2 px-6">
                 <span className="font-medium">{t('capacity')}:</span> {space.capacity}
               </p>
             )}
 
             {space.additionalInfo && (
-              <div className="mb-4 pt-4 px-6 border-t [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 text-sm text-gray-700">
+              <div className="mb-4 pt-4 px-6 border-t [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 text-sm text-gray-700 dark:text-gray-300">
                 <RichText data={space.additionalInfo} enableProse={false} enableGutter={false} />
               </div>
             )}
@@ -52,7 +52,7 @@ export const TilatBlock: React.FC<TilatBlockType> = (props) => {
                   <CMSLink
                     type="reference"
                     appearance="inline"
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 dark:text-blue-400 hover:underline dark:hover:text-blue-300"
                     locale={locale}
                     reference={{
                       relationTo: 'pages',
