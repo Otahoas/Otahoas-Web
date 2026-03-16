@@ -16,30 +16,39 @@ export const ContactInfo: Block = {
       defaultValue: 'Yhteystiedot',
     },
     {
-      name: 'email',
-      type: 'email',
-      admin: {
-        description: 'Contact email address',
-      },
-    },
-    {
-      name: 'telegramChannels',
+      name: 'links',
       type: 'array',
       labels: {
-        singular: 'Telegram-kanava',
-        plural: 'Telegram-kanavat',
+        singular: 'Yhteystieto',
+        plural: 'Yhteystiedot',
       },
       fields: [
         {
-          name: 'name',
+          name: 'type',
+          type: 'select',
+          required: true,
+          defaultValue: 'email',
+          options: [
+            { label: 'Email', value: 'email' },
+            { label: 'Telegram', value: 'telegram' },
+            { label: 'Website', value: 'website' },
+          ],
+        },
+        {
+          name: 'label',
           type: 'text',
           required: true,
+          localized: true,
+          admin: {
+            description: 'Display text for the link',
+          },
         },
         {
           name: 'url',
           type: 'text',
+          required: true,
           admin: {
-            description: 'Telegram link (e.g., https://t.me/otahoas)',
+            description: 'Email address, Telegram link, or website URL',
           },
         },
       ],

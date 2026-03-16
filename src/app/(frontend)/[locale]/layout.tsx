@@ -56,10 +56,11 @@ export default async function LocaleLayout({ children, params }: Props) {
                 preview: isEnabled,
               }}
             />
-
-            <Header locale={locale as Locale} />
-            {children}
-            <Footer locale={locale as Locale} />
+            <div className="min-h-screen min-w-[60%] max-w-screen-xl mx-auto flex flex-col bg-background/95 shadow-2xl">
+              <Header locale={locale as Locale} />
+              {children}
+              <Footer locale={locale as Locale} />
+            </div>
           </Providers>
         </NextIntlClientProvider>
       </body>

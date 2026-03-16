@@ -2,6 +2,8 @@ import * as migration_20260122_142223 from './20260122_142223';
 import * as migration_20260129_231731_add_google_calendar_fields from './20260129_231731_add_google_calendar_fields';
 import * as migration_20260301_add_public_events_calendar_id from './20260301_add_public_events_calendar_id';
 import * as migration_20260316_135646 from './20260316_135646';
+import * as migration_20260316_222703 from './20260316_222703';
+import * as migration_20260316_224341 from './20260316_224341';
 
 export const migrations = [
   {
@@ -22,6 +24,16 @@ export const migrations = [
   {
     up: migration_20260316_135646.up,
     down: migration_20260316_135646.down,
-    name: '20260316_135646'
+    name: '20260316_135646',
+  },
+  {
+    up: migration_20260316_222703.up,
+    down: migration_20260316_222703.down,
+    name: '20260316_222703',
+  },
+  {
+    up: migration_20260316_224341.up,
+    down: migration_20260316_224341.down,
+    name: '20260316_224341'
   },
 ];

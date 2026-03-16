@@ -22,7 +22,7 @@ export const LanguageSwitcher: React.FC<Props> = ({ locale }) => {
   return (
     <Link
       href={`/${otherLocale}${pathWithoutLocale}`}
-      className="flex items-center gap-1 text-sm font-medium hover:underline"
+      className="flex items-center gap-1 text-sm font-medium text-foreground hover:underline"
       title={`${t('switchTo')} ${t(otherLocale)}`}
     >
       <span className="uppercase">{otherLocale}</span>
