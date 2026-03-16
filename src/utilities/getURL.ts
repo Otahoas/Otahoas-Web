@@ -9,6 +9,12 @@ export const getServerSideURL = () => {
   )
 }
 
+// For server-to-server requests within the same process (e.g. Docker).
+// Uses INTERNAL_SERVER_URL if set, otherwise localhost:3000.
+export const getInternalServerURL = () => {
+  return process.env.INTERNAL_SERVER_URL || 'http://localhost:3000'
+}
+
 export const getClientSideURL = () => {
   if (canUseDOM) {
     const protocol = window.location.protocol

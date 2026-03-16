@@ -1,10 +1,8 @@
-import { getClientSideURL } from '@/utilities/getURL'
-
 /**
- * Processes media resource URL to ensure proper formatting
- * @param url The original URL from the resource
- * @param cacheTag Optional cache tag to append to the URL
- * @returns Properly formatted URL with cache tag if provided
+ * Processes media resource URL to ensure proper formatting.
+ * Strips the server origin from absolute same-origin URLs so that Next.js image
+ * optimization fetches the file locally instead of making an outbound HTTPS request
+ * (which fails inside Docker where the public domain isn't reachable on port 443).
  */
 export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | null): string => {
   if (!url) return ''
@@ -13,12 +11,11 @@ export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | 
     cacheTag = encodeURIComponent(cacheTag)
   }
 
-  // Check if URL already has http/https protocol
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return cacheTag ? `${url}?${cacheTag}` : url
+  // Strip own-origin prefix so the path is relative (e.g. /api/media/file/foo.jpg)
+  const serverURL = process.env.NEXT_PUBLIC_SERVER_URL
+  if (serverURL && url.startsWith(serverURL)) {
+    url = url.slice(serverURL.length)
   }
 
-  // Otherwise prepend client-side URL
-  const baseUrl = getClientSideURL()
-  return cacheTag ? `${baseUrl}${url}?${cacheTag}` : `${baseUrl}${url}`
+  return cacheTag ? `${url}?${cacheTag}` : url
 }
