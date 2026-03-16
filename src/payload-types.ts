@@ -893,6 +893,10 @@ export interface CommitteeBlock {
    * Optional description shown above the member list
    */
   description?: string | null;
+  /**
+   * Contact email shown as a card in the grid
+   */
+  email?: string | null;
   members: {
     name: string;
     /**
@@ -919,17 +923,17 @@ export interface CommitteeBlock {
  */
 export interface ContactInfoBlock {
   title: string;
-  /**
-   * Contact email address
-   */
-  email?: string | null;
-  telegramChannels?:
+  links?:
     | {
-        name: string;
+        type: 'email' | 'telegram' | 'website';
         /**
-         * Telegram link (e.g., https://t.me/otahoas)
+         * Display text for the link
          */
-        url?: string | null;
+        label: string;
+        /**
+         * Email address, Telegram link, or website URL
+         */
+        url: string;
         id?: string | null;
       }[]
     | null;
@@ -1522,6 +1526,7 @@ export interface AccessRequestFormBlockSelect<T extends boolean = true> {
 export interface CommitteeBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  email?: T;
   members?:
     | T
     | {
@@ -1540,11 +1545,11 @@ export interface CommitteeBlockSelect<T extends boolean = true> {
  */
 export interface ContactInfoBlockSelect<T extends boolean = true> {
   title?: T;
-  email?: T;
-  telegramChannels?:
+  links?:
     | T
     | {
-        name?: T;
+        type?: T;
+        label?: T;
         url?: T;
         id?: T;
       };

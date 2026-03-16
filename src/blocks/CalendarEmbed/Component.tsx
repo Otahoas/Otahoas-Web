@@ -102,8 +102,8 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
       <div className="container my-16">
         {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
         <div className="flex items-center justify-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <span className="ml-3 text-muted-foreground">
             {language === 'fi' ? 'Ladataan kalentereita...' : 'Loading calendars...'}
           </span>
         </div>

@@ -24,6 +24,13 @@ export const Committee: Block = {
       },
     },
     {
+      name: 'email',
+      type: 'email',
+      admin: {
+        description: 'Contact email shown as a card in the grid',
+      },
+    },
+    {
       name: 'members',
       type: 'array',
       required: true,
