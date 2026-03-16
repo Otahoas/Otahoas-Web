@@ -162,6 +162,7 @@ async function main() {
     console.log(`  Importing pages...`)
 
     const createdPageIds = new Map()
+    const newlyCreatedIds = new Set()
 
     // Import Finnish locale first
     const fiPages = pagesData.fi || []
@@ -172,16 +173,31 @@ async function main() {
         // Remap any page references in the content
         const remappedData = remapIds(docData, idMapping)
 
-        const created = await payload.create({
-          collection: 'pages',
-          locale: 'fi',
-          data: remappedData,
-          context: { disableRevalidate: true },
-        })
+        let resultId: any
+        try {
+          const created = await payload.create({
+            collection: 'pages',
+            locale: 'fi',
+            data: remappedData,
+            context: { disableRevalidate: true },
+          })
+          resultId = created.id
+          newlyCreatedIds.add(id)
+          console.log(`    ✓ Created page (fi): ${docData.title || docData.slug || created.id}`)
+        } catch {
+          // Page already exists — skip updating, just track ID for relation remapping
+          const existing = await payload.find({
+            collection: 'pages',
+            where: { slug: { equals: docData.slug } },
+            limit: 1,
+          })
+          if (existing.docs.length === 0) throw new Error(`Slug conflict but page not found: ${docData.slug}`)
+          resultId = existing.docs[0].id
+          console.log(`    ⏭  Skipped existing page (fi): ${docData.title || docData.slug || resultId}`)
+        }
 
-        createdPageIds.set(id, created.id)
-        idMapping.set(`pages-${id}`, created.id)
-        console.log(`    ✓ Created page (fi): ${docData.title || docData.slug || created.id}`)
+        createdPageIds.set(id, resultId)
+        idMapping.set(`pages-${id}`, resultId)
       } catch (error) {
         console.error(`    ✗ Failed to import page (fi):`, (error as Error).message)
       }
@@ -191,11 +207,15 @@ async function main() {
     const enPages = pagesData.en || []
     for (const doc of enPages) {
       try {
-        const { id, updatedAt, createdAt, ...docData } = doc
+        const { id, updatedAt: _updatedAt, createdAt: _createdAt, slug: _slug, generateSlug: _generateSlug, _status: _s, ...docData } = doc
 
         const newId = createdPageIds.get(id)
         if (!newId) {
           console.warn(`    ⚠️  No Finnish page found for ID ${id}, skipping English update`)
+          continue
+        }
+        if (!newlyCreatedIds.has(id)) {
+          console.log(`    ⏭  Skipped existing page (en): ${docData.title || docData.slug || newId}`)
           continue
         }
 
