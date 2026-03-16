@@ -23,6 +23,8 @@ services:
       NODE_ENV: production
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       DATABASE_URL: ${DATABASE_URL}
+    volumes:
+      - media_data:/app/public/media
     depends_on:
       postgres:
         condition: service_healthy
@@ -83,3 +85,5 @@ secrets:
 volumes:
   postgres_data:
     name: otahoas_postgres_data_prod
+  media_data:
+    name: otahoas_media_data_prod
