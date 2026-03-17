@@ -25,7 +25,7 @@ export const LanguageSwitcher: React.FC<Props> = ({ locale, className }) => {
     <Link
       href={`/${otherLocale}${pathWithoutLocale}`}
       className={cn(
-        'flex items-center gap-1 text-sm font-medium hover:underline text-foreground',
+        'flex items-center gap-1 text-sm font-medium text-foreground hover:underline',
         className,
       )}
       title={`${t('switchTo')} ${t(otherLocale)}`}
