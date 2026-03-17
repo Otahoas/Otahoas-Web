@@ -22,7 +22,7 @@ export const Logo = (props: Props) => {
       loading={loading}
       fetchPriority={priority}
       decoding="async"
-      className={clsx('w-12 h-12', className)}
+      className={clsx('w-12 h-12 object-contain', className)}
       src="/otahoas.png"
     />
   )
