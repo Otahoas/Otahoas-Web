@@ -20,7 +20,7 @@ export async function Footer({ locale }: Props) {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="mt-auto border-t border-border bg-black dark:bg-card text-white">
+    <footer className="mt-auto border-t border-border bg-[rgb(249,109,82)] dark:bg-[rgb(84,7,5)] text-white">
       <div className="container py-8 flex flex-wrap items-center justify-between gap-4">
         <Link className="flex items-center" href={`/${locale}`}>
           <Logo />
@@ -30,8 +30,8 @@ export async function Footer({ locale }: Props) {
           {navItems.map(({ link }, i) => {
             return <CMSLink className="text-white" key={i} {...link} locale={locale} />
           })}
-          <ThemeSelector />
-          <LanguageSwitcher locale={locale} />
+          <ThemeSelector triggerClassName="text-white" />
+          <LanguageSwitcher className="text-white" locale={locale} />
         </div>
       </div>
     </footer>

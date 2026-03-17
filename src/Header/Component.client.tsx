@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 
-import type { Header, Media } from '@/payload-types'
+import type { Header } from '@/payload-types'
 import type { Locale } from '@/i18n/config'
 
 import { HeaderNav } from './Nav'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { Logo } from '@/components/Logo/Logo'
 
 interface HeaderClientProps {
   data: Header
@@ -31,24 +32,13 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
     if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
   }, [headerTheme, theme])
 
-  const logo = data.logo as Media | null
-  const logoSize = data.logoSize || 48
   const siteTitle = data.siteTitle || 'OtaHoas'
-
-  const logoUrl = logo?.sizes?.thumbnail?.url || logo?.url || '/otahoas.png'
 
   return (
     <header className="container relative z-20" {...(theme ? { 'data-theme': theme } : {})}>
       <div className="py-4 md:py-8 flex justify-between items-center">
         <Link href={`/${locale}`} className="flex items-center gap-3">
-          <img
-            src={logoUrl}
-            alt={logo?.alt || siteTitle}
-            width={logoSize}
-            height={logoSize}
-            style={{ width: logoSize, height: logoSize }}
-            className="object-contain"
-          />
+          <Logo />
           <span className="font-bold text-xl">{siteTitle}</span>
         </Link>
 

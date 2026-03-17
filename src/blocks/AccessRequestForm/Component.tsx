@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select'
 
 interface ReservationTarget {
-  id: string
+  id: number
   emailPrefix: string
   labelFi: string
   labelEn: string
@@ -74,8 +74,8 @@ const translations = {
     submitting: 'Lähetetään...',
     required: 'Pakollinen kenttä',
     invalidEmail: 'Virheellinen sähköpostiosoite',
-    invalidDate: 'Virheellinen päivämäärä (PP.KK.VVVV)',
-    invalidTime: 'Virheellinen aika (TT:MM)',
+    invalidDate: 'Virheellinen päivämäärä',
+    invalidTime: 'Virheellinen aika',
     successTitle: 'Käyttöpyyntö lähetetty!',
     errorTitle: 'Virhe',
     loadingTargets: 'Ladataan kohteita...',
@@ -128,8 +128,8 @@ const translations = {
     submitting: 'Sending...',
     required: 'Required field',
     invalidEmail: 'Invalid email address',
-    invalidDate: 'Invalid date (DD.MM.YYYY)',
-    invalidTime: 'Invalid time (HH:MM)',
+    invalidDate: 'Invalid date',
+    invalidTime: 'Invalid time',
     successTitle: 'Access request sent!',
     errorTitle: 'Error',
     loadingTargets: 'Loading targets...',
@@ -156,16 +156,29 @@ const translations = {
   },
 }
 
-// Validate Finnish date format (DD.MM.YYYY)
+// Validate date format (YYYY-MM-DD or DD.MM.YYYY)
 const validateDate = (value: string): boolean => {
   if (!value) return false
-  const regex = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/
-  const match = value.match(regex)
-  if (!match) return false
+  const isoRegex = /^(\d{4})-(\d{2})-(\d{2})$/
+  const fiRegex = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/
 
-  const day = parseInt(match[1], 10)
-  const month = parseInt(match[2], 10)
-  const year = parseInt(match[3], 10)
+  let day: number
+  let month: number
+  let year: number
+
+  const isoMatch = value.match(isoRegex)
+  if (isoMatch) {
+    year = parseInt(isoMatch[1], 10)
+    month = parseInt(isoMatch[2], 10)
+    day = parseInt(isoMatch[3], 10)
+  } else {
+    const fiMatch = value.match(fiRegex)
+    if (!fiMatch) return false
+
+    day = parseInt(fiMatch[1], 10)
+    month = parseInt(fiMatch[2], 10)
+    year = parseInt(fiMatch[3], 10)
+  }
 
   if (month < 1 || month > 12) return false
   if (day < 1 || day > 31) return false
@@ -190,9 +203,13 @@ const validateTime = (value: string): boolean => {
   return true
 }
 
-// Convert Finnish date to ISO format for API
-const finnishDateToISO = (finnishDate: string): string => {
-  const [day, month, year] = finnishDate.split('.')
+// Convert date to ISO format for API (accepts YYYY-MM-DD or DD.MM.YYYY)
+const dateToISO = (dateValue: string): string => {
+  if (dateValue.includes('-')) {
+    return dateValue
+  }
+
+  const [day, month, year] = dateValue.split('.')
   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
 }
 
@@ -231,13 +248,17 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(
+    null,
+  )
 
   // Fetch targets on mount
   useEffect(() => {
     const fetchTargets = async () => {
       try {
-        const response = await fetch('/api/reservation-targets?where[active][equals]=true&sort=sortOrder&limit=100')
+        const response = await fetch(
+          '/api/reservation-targets?where[active][equals]=true&sort=sortOrder&limit=100',
+        )
         const data = await response.json()
         setTargets(data.docs || [])
       } catch (error) {
@@ -250,7 +271,9 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
     fetchTargets()
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
     // Clear error when user starts typing
@@ -316,8 +339,8 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
         body: JSON.stringify({
           ...formData,
           language,
-          startDate: finnishDateToISO(formData.startDate),
-          endDate: finnishDateToISO(formData.endDate),
+          startDate: dateToISO(formData.startDate),
+          endDate: dateToISO(formData.endDate),
           participants: formData.participants ? parseInt(formData.participants, 10) : undefined,
         }),
       })
@@ -373,6 +396,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
 
   const inputClassName =
     'flex h-10 w-full rounded border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+  const selectTriggerClassName = `${inputClassName} justify-between [&>span]:line-clamp-1`
   const textareaClassName =
     'flex min-h-[80px] w-full rounded border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
 
@@ -427,9 +451,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
               : 'bg-error border border-red-600/30 text-foreground'
           }`}
         >
-          <h3 className="font-bold mb-2">
-            {submitResult.success ? t.successTitle : t.errorTitle}
-          </h3>
+          <h3 className="font-bold mb-2">{submitResult.success ? t.successTitle : t.errorTitle}</h3>
           {submitResult.success && confirmationMessage ? (
             <RichText data={confirmationMessage} enableGutter={false} />
           ) : (
@@ -453,21 +475,23 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
             ) : (
               <Select
                 value={formData.targetId}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, targetId: value }))
-                }
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, targetId: value }))}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className={selectTriggerClassName}>
                   <SelectValue placeholder={t.selectTarget} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-border bg-background text-foreground">
                   {Object.entries(groupedTargets).map(([category, categoryTargets]) => (
                     <SelectGroup key={category}>
-                      <SelectLabel>
+                      <SelectLabel className="text-muted-foreground">
                         {t.category[category as keyof typeof t.category] || category}
                       </SelectLabel>
                       {categoryTargets.map((target) => (
-                        <SelectItem key={target.id} value={target.id}>
+                        <SelectItem
+                          className="text-foreground focus:bg-accent/40 focus:text-foreground"
+                          key={target.id}
+                          value={String(target.id)}
+                        >
                           {language === 'fi' ? target.labelFi : target.labelEn}
                         </SelectItem>
                       ))}
@@ -601,7 +625,9 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                   onChange={handleChange}
                   className={inputClassName}
                 />
-                {errors.associationName && <p className={errorClassName}>{errors.associationName}</p>}
+                {errors.associationName && (
+                  <p className={errorClassName}>{errors.associationName}</p>
+                )}
               </div>
             )}
           </div>
@@ -613,12 +639,11 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                 {t.startDate} *
               </label>
               <input
-                type="text"
+                type="date"
                 id="startDate"
                 name="startDate"
                 value={formData.startDate}
                 onChange={handleChange}
-                placeholder={t.placeholders.date}
                 className={inputClassName}
               />
               {errors.startDate && <p className={errorClassName}>{errors.startDate}</p>}
@@ -629,12 +654,11 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                 {t.endDate} *
               </label>
               <input
-                type="text"
+                type="date"
                 id="endDate"
                 name="endDate"
                 value={formData.endDate}
                 onChange={handleChange}
-                placeholder={t.placeholders.date}
                 className={inputClassName}
               />
               {errors.endDate && <p className={errorClassName}>{errors.endDate}</p>}
@@ -645,12 +669,11 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                 {t.startTime} *
               </label>
               <input
-                type="text"
+                type="time"
                 id="startTime"
                 name="startTime"
                 value={formData.startTime}
                 onChange={handleChange}
-                placeholder={t.placeholders.time}
                 className={inputClassName}
               />
               {errors.startTime && <p className={errorClassName}>{errors.startTime}</p>}
@@ -661,12 +684,11 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                 {t.endTime} *
               </label>
               <input
-                type="text"
+                type="time"
                 id="endTime"
                 name="endTime"
                 value={formData.endTime}
                 onChange={handleChange}
-                placeholder={t.placeholders.time}
                 className={inputClassName}
               />
               {errors.endTime && <p className={errorClassName}>{errors.endTime}</p>}
@@ -764,7 +786,9 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                   onChange={handleChange}
                   className={inputClassName}
                 />
-                {errors.publicEventName && <p className={errorClassName}>{errors.publicEventName}</p>}
+                {errors.publicEventName && (
+                  <p className={errorClassName}>{errors.publicEventName}</p>
+                )}
               </div>
             )}
           </div>
