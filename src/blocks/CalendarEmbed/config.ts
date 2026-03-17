@@ -21,7 +21,8 @@ export const CalendarEmbed: Block = {
       name: 'calendarUrl',
       type: 'text',
       admin: {
-        description: 'Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)',
+        description:
+          'Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)',
         condition: (_, siblingData) => !siblingData?.useCombinedCalendars,
       },
     },

@@ -153,18 +153,12 @@ const _buildEmailContent = (
   return { subject, html, text }
 }
 
-const buildTelegramMessage = (
-  data: AccessRequestBody,
-  target: ReservationTarget,
-): string => {
+const buildTelegramMessage = (data: AccessRequestBody, target: ReservationTarget): string => {
   const targetLabel = target.labelEn
 
   const escapeHtml = (str: string | undefined): string => {
     if (!str) return ''
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }
 
   const lines = [
@@ -277,7 +271,10 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
     // Check if target has a topic ID
     if (!target.telegramTopicId) {
       payload.logger.error(`No Telegram topic ID configured for target: ${target.emailPrefix}`)
-      return Response.json({ error: 'This target has no configured notification channel' }, { status: 500 })
+      return Response.json(
+        { error: 'This target has no configured notification channel' },
+        { status: 500 },
+      )
     }
 
     // Build Telegram message
@@ -391,10 +388,7 @@ export const reservationTargetCalendarsHandler: PayloadHandler = async (req) => 
     const targets = await payload.find({
       collection: 'reservation-targets',
       where: {
-        and: [
-          { active: { equals: true } },
-          { googleCalendarId: { exists: true } },
-        ],
+        and: [{ active: { equals: true } }, { googleCalendarId: { exists: true } }],
       },
       sort: 'sortOrder',
       limit: 100,

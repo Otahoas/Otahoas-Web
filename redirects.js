@@ -14,7 +14,8 @@ const redirects = async () => {
 
   const kokouksetRedirect = {
     source: '/kokoukset',
-    destination: 'https://drive.google.com/drive/folders/14QoR-2SS9qWVidh4lDUunij3rfrFz87P?usp=sharing',
+    destination:
+      'https://drive.google.com/drive/folders/14QoR-2SS9qWVidh4lDUunij3rfrFz87P?usp=sharing',
     permanent: false,
   }
 

@@ -13,7 +13,10 @@ const getDefaultOpenGraph = (description?: string) => ({
   title: 'OtaHoas',
 })
 
-export const mergeOpenGraph = (og?: Metadata['openGraph'], description?: string): Metadata['openGraph'] => {
+export const mergeOpenGraph = (
+  og?: Metadata['openGraph'],
+  description?: string,
+): Metadata['openGraph'] => {
   const defaultOpenGraph = getDefaultOpenGraph(description)
   return {
     ...defaultOpenGraph,

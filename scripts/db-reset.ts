@@ -36,7 +36,7 @@ async function main() {
     // Drop and recreate schema
     console.log('   Dropping schema...')
     await execAsync(
-      `psql -h ${host} -p ${port} -U ${user} -d ${database} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"`
+      `psql -h ${host} -p ${port} -U ${user} -d ${database} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"`,
     )
     console.log('   Schema dropped and recreated')
 

@@ -20,8 +20,8 @@ export async function Footer({ locale }: Props) {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="mt-auto border-t border-border bg-[rgb(249,109,82)] dark:bg-[rgb(84,7,5)] text-white">
-      <div className="container py-8 flex flex-wrap items-center justify-between gap-4">
+    <footer className="mt-auto border-t border-border bg-[rgb(249,109,82)] text-white dark:bg-[rgb(84,7,5)]">
+      <div className="container flex flex-wrap items-center justify-between gap-4 py-8">
         <Link className="flex items-center" href={`/${locale}`}>
           <Logo />
         </Link>

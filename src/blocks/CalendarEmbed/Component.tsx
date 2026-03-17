@@ -41,9 +41,7 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
 
         if (calendars.length === 0) {
           setError(
-            language === 'fi'
-              ? 'Ei kalentereita näytettäväksi.'
-              : 'No calendars to display.',
+            language === 'fi' ? 'Ei kalentereita näytettäväksi.' : 'No calendars to display.',
           )
           setCombinedCalendarUrl(null)
           return
@@ -66,9 +64,7 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
       } catch (err) {
         console.error('Failed to fetch calendars:', err)
         setError(
-          language === 'fi'
-            ? 'Kalentereiden lataus epäonnistui.'
-            : 'Failed to load calendars.',
+          language === 'fi' ? 'Kalentereiden lataus epäonnistui.' : 'Failed to load calendars.',
         )
       } finally {
         setLoading(false)
@@ -100,9 +96,9 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
   if (useCombinedCalendars && loading) {
     return (
       <div className="container my-16">
-        {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
-        <div className="flex items-center justify-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        {title && <h2 className="mb-6 text-2xl font-bold">{title}</h2>}
+        <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           <span className="ml-3 text-muted-foreground">
             {language === 'fi' ? 'Ladataan kalentereita...' : 'Loading calendars...'}
           </span>
@@ -115,8 +111,8 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
   if (useCombinedCalendars && error) {
     return (
       <div className="container my-16">
-        {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
+        {title && <h2 className="mb-6 text-2xl font-bold">{title}</h2>}
+        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-800">
           {error}
         </div>
       </div>
@@ -127,7 +123,7 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
   if (!useCombinedCalendars && !calendarUrl) {
     return (
       <div className="container my-16">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
+        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-800">
           {language === 'fi'
             ? 'Kalenterin URL-osoitetta ei ole määritetty.'
             : 'Calendar URL is not configured.'}
@@ -143,7 +139,7 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
 
   return (
     <div className="container my-16">
-      {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
+      {title && <h2 className="mb-6 text-2xl font-bold">{title}</h2>}
       <div className="w-full overflow-hidden rounded-lg border border-gray-200">
         <iframe
           src={processedUrl}

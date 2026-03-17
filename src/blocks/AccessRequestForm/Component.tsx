@@ -414,11 +414,11 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
 
       {/* Quick Links */}
       {(rulesPageLink || spacesInfoLink || calendarLink) && (
-        <div className="mb-8 flex flex-wrap gap-4 max-w-2xl mx-auto">
+        <div className="mx-auto mb-8 flex max-w-2xl flex-wrap gap-4">
           {rulesPageLink && (
             <a
               href={rulesPageLink}
-              className="inline-flex items-center px-4 py-2 border border-primary/40 bg-primary/10 text-foreground hover:bg-primary/20 hover:border-primary rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {language === 'fi' ? 'Säännöt' : 'Rules'}
             </a>
@@ -426,7 +426,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           {spacesInfoLink && (
             <a
               href={spacesInfoLink}
-              className="inline-flex items-center px-4 py-2 border border-primary/40 bg-primary/10 text-foreground hover:bg-primary/20 hover:border-primary rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {language === 'fi' ? 'Tilat' : 'Spaces'}
             </a>
@@ -434,7 +434,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           {calendarLink && (
             <a
               href={calendarLink}
-              className="inline-flex items-center px-4 py-2 border border-primary/40 bg-primary/10 text-foreground hover:bg-primary/20 hover:border-primary rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {language === 'fi' ? 'Kalenteri' : 'Calendar'}
             </a>
@@ -445,13 +445,13 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
       {/* Success/Error Message */}
       {submitResult && (
         <div
-          className={`mb-8 p-4 rounded-lg ${
+          className={`mb-8 rounded-lg p-4 ${
             submitResult.success
-              ? 'bg-success border border-green-600/30 text-foreground'
-              : 'bg-error border border-red-600/30 text-foreground'
+              ? 'border border-green-600/30 bg-success text-foreground'
+              : 'border border-red-600/30 bg-error text-foreground'
           }`}
         >
-          <h3 className="font-bold mb-2">{submitResult.success ? t.successTitle : t.errorTitle}</h3>
+          <h3 className="mb-2 font-bold">{submitResult.success ? t.successTitle : t.errorTitle}</h3>
           {submitResult.success && confirmationMessage ? (
             <RichText data={confirmationMessage} enableGutter={false} />
           ) : (
@@ -462,7 +462,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
 
       {/* Form */}
       {!submitResult?.success && (
-        <form onSubmit={handleSubmit} className="max-w-2xl space-y-6 mx-auto">
+        <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
           {/* Target Selection */}
           <div>
             <label htmlFor="targetId" className={labelClassName}>
@@ -504,7 +504,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           </div>
 
           {/* Contact Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label htmlFor="name" className={labelClassName}>
                 {t.name} *
@@ -587,8 +587,8 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           {/* Association */}
           <div>
             <p className={labelClassName}>{t.association}</p>
-            <div className="flex flex-col gap-2 mt-1">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="mt-1 flex flex-col gap-2">
+              <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="radio"
                   name="association"
@@ -599,7 +599,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                 />
                 {t.associationYes}
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="radio"
                   name="association"
@@ -633,7 +633,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           </div>
 
           {/* Date and Time */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label htmlFor="startDate" className={labelClassName}>
                 {t.startDate} *
@@ -696,7 +696,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           </div>
 
           {/* Additional Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label htmlFor="participants" className={labelClassName}>
                 {t.participants}
@@ -747,9 +747,9 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           {/* Public Event */}
           <div>
             <p className={labelClassName}>{t.isPublicEvent}</p>
-            <p className="text-sm text-muted-foreground mb-2">{t.isPublicEventDescription}</p>
+            <p className="mb-2 text-sm text-muted-foreground">{t.isPublicEventDescription}</p>
             <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="radio"
                   name="isPublicEvent"
@@ -760,7 +760,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                 />
                 {t.isPublicEventYes}
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="radio"
                   name="isPublicEvent"
@@ -797,7 +797,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           <button
             type="submit"
             disabled={isSubmitting || loadingTargets}
-            className="w-full md:w-auto px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+            className="w-full rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground md:w-auto"
           >
             {isSubmitting ? t.submitting : t.submit}
           </button>

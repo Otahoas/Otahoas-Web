@@ -18,29 +18,29 @@ export const TilatBlock: React.FC<TilatBlockType> = (props) => {
 
   return (
     <div className="container mx-auto">
-      {title && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {title && <h2 className="mb-6 text-2xl font-semibold">{title}</h2>}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {spaces.map((space, index) => (
           <div
             key={index}
-            className="border rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col bg-card text-card-foreground"
+            className="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm transition-shadow hover:shadow-md"
           >
             {space.image && (
               <div>
                 <Media resource={space.image} imgClassName="w-full h-48 object-cover rounded-md" />
               </div>
             )}
-            <h3 className="text-xl font-semibold mt-4 px-6">{space.name || space.address}</h3>
-            <p className="text-muted-foreground mb-2 px-6">{space.address}</p>
+            <h3 className="mt-4 px-6 text-xl font-semibold">{space.name || space.address}</h3>
+            <p className="mb-2 px-6 text-muted-foreground">{space.address}</p>
 
             {space.capacity && (
-              <p className="text-muted-foreground mb-2 px-6">
+              <p className="mb-2 px-6 text-muted-foreground">
                 <span className="font-medium">{t('capacity')}:</span> {space.capacity}
               </p>
             )}
 
             {space.additionalInfo && (
-              <div className="mb-4 pt-4 px-6 border-t [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 text-sm text-foreground/80">
+              <div className="mb-4 border-t px-6 pt-4 text-sm text-foreground/80 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5">
                 <RichText data={space.additionalInfo} enableProse={false} enableGutter={false} />
               </div>
             )}
@@ -48,11 +48,11 @@ export const TilatBlock: React.FC<TilatBlockType> = (props) => {
             {space.linkedPage &&
               typeof space.linkedPage === 'object' &&
               'slug' in space.linkedPage && (
-                <p className="text-sm mt-auto mb-4 px-6">
+                <p className="mb-4 mt-auto px-6 text-sm">
                   <CMSLink
                     type="reference"
                     appearance="inline"
-                    className="text-foreground/70 hover:text-foreground underline underline-offset-4"
+                    className="text-foreground/70 underline underline-offset-4 hover:text-foreground"
                     locale={locale}
                     reference={{
                       relationTo: 'pages',

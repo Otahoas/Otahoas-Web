@@ -8,18 +8,29 @@ export const CommitteeBlock: React.FC<CommitteeBlockProps> = (props) => {
 
   return (
     <div className="container my-16">
-      <div className="max-w-4xl mx-auto">
-        {title && (
-          <h2 className="text-3xl font-bold text-center mb-4">{title}</h2>
-        )}
+      <div className="mx-auto max-w-4xl">
+        {title && <h2 className="mb-4 text-center text-3xl font-bold">{title}</h2>}
         {email && (
-          <div className="flex justify-center mb-4">
-            <div className="inline-flex flex-col gap-2 px-5 py-3 rounded-lg bg-[rgb(249,109,82)] dark:bg-[rgb(84,7,5)] text-white">
+          <div className="mb-4 flex justify-center">
+            <div className="inline-flex flex-col gap-2 rounded-lg bg-[rgb(249,109,82)] px-5 py-3 text-white dark:bg-[rgb(84,7,5)]">
               <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <svg
+                  className="h-5 w-5 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
-                <a href={`mailto:${email}`} className="text-sm font-medium hover:underline underline-offset-4">
+                <a
+                  href={`mailto:${email}`}
+                  className="text-sm font-medium underline-offset-4 hover:underline"
+                >
                   {email}
                 </a>
               </div>
@@ -27,31 +38,29 @@ export const CommitteeBlock: React.FC<CommitteeBlockProps> = (props) => {
           </div>
         )}
         {description && (
-          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            {description}
-          </p>
+          <p className="mx-auto mb-8 max-w-2xl text-center text-muted-foreground">{description}</p>
         )}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
           {members?.map((member, index) => {
             const image = member.image as Media | null
 
             return (
               <div
                 key={index}
-                className="flex flex-col items-center text-center p-4 rounded-lg bg-[rgb(249,109,82)] dark:bg-[rgb(84,7,5)] text-white dark:text-foreground"
+                className="flex flex-col items-center rounded-lg bg-[rgb(249,109,82)] p-4 text-center text-white dark:bg-[rgb(84,7,5)] dark:text-foreground"
               >
-                <div className="w-24 h-24 rounded-full overflow-hidden bg-muted mb-3 flex items-center justify-center">
+                <div className="mb-3 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-muted">
                   {image?.url ? (
                     <Image
                       src={image.url}
                       alt={member.name}
                       width={96}
                       height={96}
-                      className="object-cover w-full h-full"
+                      className="h-full w-full object-cover"
                     />
                   ) : (
                     <svg
-                      className="w-12 h-12 text-muted-foreground"
+                      className="h-12 w-12 text-muted-foreground"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -59,13 +68,9 @@ export const CommitteeBlock: React.FC<CommitteeBlockProps> = (props) => {
                     </svg>
                   )}
                 </div>
-                <h3 className="font-semibold">
-                  {member.name}
-                </h3>
+                <h3 className="font-semibold">{member.name}</h3>
                 {member.title && (
-                  <p className="text-sm text-white/70 dark:text-muted-foreground">
-                    {member.title}
-                  </p>
+                  <p className="text-sm text-white/70 dark:text-muted-foreground">{member.title}</p>
                 )}
                 {member.telegram && (
                   <a
@@ -80,7 +85,6 @@ export const CommitteeBlock: React.FC<CommitteeBlockProps> = (props) => {
               </div>
             )
           })}
-
         </div>
       </div>
     </div>
