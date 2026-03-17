@@ -23,7 +23,8 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
     // If the page was previously published, we need to revalidate the old path
     if (previousDoc?._status === 'published' && doc._status !== 'published') {
       for (const locale of locales) {
-        const oldPath = previousDoc.slug === 'home' ? `/${locale}` : `/${locale}/${previousDoc.slug}`
+        const oldPath =
+          previousDoc.slug === 'home' ? `/${locale}` : `/${locale}/${previousDoc.slug}`
         payload.logger.info(`Revalidating old page at path: ${oldPath}`)
         revalidatePath(oldPath)
       }

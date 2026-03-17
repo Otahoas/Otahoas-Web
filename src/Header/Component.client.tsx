@@ -36,21 +36,21 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
 
   return (
     <header className="container relative z-20" {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-4 md:py-8 flex justify-between items-center">
+      <div className="flex items-center justify-between py-4 md:py-8">
         <Link href={`/${locale}`} className="flex items-center gap-3">
           <Logo />
-          <span className="font-bold text-xl">{siteTitle}</span>
+          <span className="text-xl font-bold">{siteTitle}</span>
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden items-center gap-4 md:flex">
           <HeaderNav data={data} locale={locale} />
           <LanguageSwitcher locale={locale} />
         </div>
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden p-2"
+          className="p-2 md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
         >
@@ -60,7 +60,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
 
       {/* Mobile nav */}
       {mobileMenuOpen && (
-        <div className="md:hidden pb-4 border-t pt-4">
+        <div className="border-t pb-4 pt-4 md:hidden">
           <nav className="flex flex-col gap-4">
             <HeaderNav data={data} locale={locale} mobile />
             <LanguageSwitcher locale={locale} />

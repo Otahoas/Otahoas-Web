@@ -191,9 +191,12 @@ async function main() {
             where: { slug: { equals: docData.slug } },
             limit: 1,
           })
-          if (existing.docs.length === 0) throw new Error(`Slug conflict but page not found: ${docData.slug}`)
+          if (existing.docs.length === 0)
+            throw new Error(`Slug conflict but page not found: ${docData.slug}`)
           resultId = existing.docs[0].id
-          console.log(`    ⏭  Skipped existing page (fi): ${docData.title || docData.slug || resultId}`)
+          console.log(
+            `    ⏭  Skipped existing page (fi): ${docData.title || docData.slug || resultId}`,
+          )
         }
 
         createdPageIds.set(id, resultId)
@@ -207,7 +210,15 @@ async function main() {
     const enPages = pagesData.en || []
     for (const doc of enPages) {
       try {
-        const { id, updatedAt: _updatedAt, createdAt: _createdAt, slug: _slug, generateSlug: _generateSlug, _status: _s, ...docData } = doc
+        const {
+          id,
+          updatedAt: _updatedAt,
+          createdAt: _createdAt,
+          slug: _slug,
+          generateSlug: _generateSlug,
+          _status: _s,
+          ...docData
+        } = doc
 
         const newId = createdPageIds.get(id)
         if (!newId) {
@@ -215,7 +226,9 @@ async function main() {
           continue
         }
         if (!newlyCreatedIds.has(id)) {
-          console.log(`    ⏭  Skipped existing page (en): ${docData.title || docData.slug || newId}`)
+          console.log(
+            `    ⏭  Skipped existing page (en): ${docData.title || docData.slug || newId}`,
+          )
           continue
         }
 

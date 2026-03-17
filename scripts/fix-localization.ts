@@ -69,8 +69,22 @@ async function main() {
     const navItems = [
       { link: { type: 'custom' as const, label: 'Tilat', url: '/tilat', newTab: false } },
       { link: { type: 'custom' as const, label: 'Säännöt', url: '/saannot', newTab: false } },
-      { link: { type: 'custom' as const, label: 'Käyttöpyyntö', url: '/kayttopyynto', newTab: false } },
-      { link: { type: 'custom' as const, label: 'Avaimellisille', url: '/avaimellisille', newTab: false } },
+      {
+        link: {
+          type: 'custom' as const,
+          label: 'Käyttöpyyntö',
+          url: '/kayttopyynto',
+          newTab: false,
+        },
+      },
+      {
+        link: {
+          type: 'custom' as const,
+          label: 'Avaimellisille',
+          url: '/avaimellisille',
+          newTab: false,
+        },
+      },
     ]
 
     await payload.updateGlobal({
@@ -89,8 +103,17 @@ async function main() {
         navItems: [
           { link: { type: 'custom', label: 'Spaces', url: '/tilat', newTab: false } },
           { link: { type: 'custom', label: 'Rules', url: '/saannot', newTab: false } },
-          { link: { type: 'custom', label: 'Access Request', url: '/kayttopyynto', newTab: false } },
-          { link: { type: 'custom', label: 'For Key Holders', url: '/avaimellisille', newTab: false } },
+          {
+            link: { type: 'custom', label: 'Access Request', url: '/kayttopyynto', newTab: false },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'For Key Holders',
+              url: '/avaimellisille',
+              newTab: false,
+            },
+          },
         ],
       },
       context: { disableRevalidate: true },
@@ -102,16 +125,13 @@ async function main() {
     await payload.updateGlobal({
       slug: 'footer',
       data: {
-        navItems: [
-          { link: { type: 'custom', label: 'Admin', url: '/admin', newTab: false } },
-        ],
+        navItems: [{ link: { type: 'custom', label: 'Admin', url: '/admin', newTab: false } }],
       },
       context: { disableRevalidate: true },
     })
 
     console.log('Footer updated')
     console.log('Done!')
-
   } catch (error) {
     console.error('Error:', error)
     process.exit(1)

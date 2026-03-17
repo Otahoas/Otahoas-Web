@@ -17,7 +17,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, locale, mobile }) =>
   const navItems = data?.navItems || []
 
   return (
-    <nav className={mobile ? 'flex flex-col gap-3' : 'flex gap-3 items-center'}>
+    <nav className={mobile ? 'flex flex-col gap-3' : 'flex items-center gap-3'}>
       {navItems.map(({ link }, i) => {
         return <CMSLink key={i} {...link} appearance="link" locale={locale} />
       })}

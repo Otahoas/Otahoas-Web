@@ -56,7 +56,7 @@ export default async function LocaleLayout({ children, params }: Props) {
                 preview: isEnabled,
               }}
             />
-            <div className="min-h-screen min-w-[60%] max-w-screen-xl mx-auto flex flex-col bg-background/95 shadow-2xl">
+            <div className="mx-auto flex min-h-screen min-w-[60%] max-w-screen-xl flex-col bg-background/95 shadow-2xl">
               <Header locale={locale as Locale} />
               {children}
               <Footer locale={locale as Locale} />

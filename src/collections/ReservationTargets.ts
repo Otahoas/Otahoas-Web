@@ -30,7 +30,8 @@ export const ReservationTargets: CollectionConfig = {
       type: 'text',
       defaultValue: '1',
       admin: {
-        description: 'Telegram topic/thread ID where access requests will be sent. Find it by copying a message link from the topic.',
+        description:
+          'Telegram topic/thread ID where access requests will be sent. Find it by copying a message link from the topic.',
       },
     },
     {

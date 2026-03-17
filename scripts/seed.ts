@@ -25,18 +25,78 @@ const homeOnly = args.includes('--home-only')
 
 // Reservation targets from listat.txt
 const reservationTargets = [
-  { emailPrefix: 'jmt10cd', labelFi: 'JMT10CD-kerhohuone', labelEn: 'JMT10CD club room', category: 'club-room' as const },
-  { emailPrefix: 'jmt10h', labelFi: 'JMT10H-kerhohuone', labelEn: 'JMT10H club room', category: 'club-room' as const },
-  { emailPrefix: 'jmt11ab', labelFi: 'JMT11AB-kerhohuone', labelEn: 'JMT11AB club room', category: 'club-room' as const },
-  { emailPrefix: 'jmt11cd', labelFi: 'JMT11CD-kerhohuone', labelEn: 'JMT11CD club room', category: 'club-room' as const },
-  { emailPrefix: 'smt3', labelFi: 'SMT3-kerhohuone', labelEn: 'SMT3 club room', category: 'club-room' as const },
-  { emailPrefix: 'sk5b', labelFi: 'SK5B-kerhohuone', labelEn: 'SK5B club room', category: 'club-room' as const },
-  { emailPrefix: 'sk6d', labelFi: 'SK6D-kerhohuone', labelEn: 'SK6D club room', category: 'club-room' as const },
-  { emailPrefix: 'jmt11b_mekaniikka', labelFi: 'JMT11B-mekaniikkapaja', labelEn: 'JMT11B mechanics workshop', category: 'workshop' as const },
-  { emailPrefix: 'sk6c_puu', labelFi: 'SK6-puutyöpaja', labelEn: 'SK6C wood workshop', category: 'workshop' as const },
-  { emailPrefix: 'jmt10d_soitto', labelFi: 'JMT10D-soittohuone', labelEn: 'JMT10D music room', category: 'music-room' as const },
-  { emailPrefix: 'jmt11cd_varasto', labelFi: 'Muuttolaatikot', labelEn: 'Moving boxes', category: 'storage' as const },
-  { emailPrefix: 'jmt11m_kontti', labelFi: 'Kajakit ja SUP-laudat', labelEn: 'Kayaks and SUP-boards', category: 'equipment' as const },
+  {
+    emailPrefix: 'jmt10cd',
+    labelFi: 'JMT10CD-kerhohuone',
+    labelEn: 'JMT10CD club room',
+    category: 'club-room' as const,
+  },
+  {
+    emailPrefix: 'jmt10h',
+    labelFi: 'JMT10H-kerhohuone',
+    labelEn: 'JMT10H club room',
+    category: 'club-room' as const,
+  },
+  {
+    emailPrefix: 'jmt11ab',
+    labelFi: 'JMT11AB-kerhohuone',
+    labelEn: 'JMT11AB club room',
+    category: 'club-room' as const,
+  },
+  {
+    emailPrefix: 'jmt11cd',
+    labelFi: 'JMT11CD-kerhohuone',
+    labelEn: 'JMT11CD club room',
+    category: 'club-room' as const,
+  },
+  {
+    emailPrefix: 'smt3',
+    labelFi: 'SMT3-kerhohuone',
+    labelEn: 'SMT3 club room',
+    category: 'club-room' as const,
+  },
+  {
+    emailPrefix: 'sk5b',
+    labelFi: 'SK5B-kerhohuone',
+    labelEn: 'SK5B club room',
+    category: 'club-room' as const,
+  },
+  {
+    emailPrefix: 'sk6d',
+    labelFi: 'SK6D-kerhohuone',
+    labelEn: 'SK6D club room',
+    category: 'club-room' as const,
+  },
+  {
+    emailPrefix: 'jmt11b_mekaniikka',
+    labelFi: 'JMT11B-mekaniikkapaja',
+    labelEn: 'JMT11B mechanics workshop',
+    category: 'workshop' as const,
+  },
+  {
+    emailPrefix: 'sk6c_puu',
+    labelFi: 'SK6-puutyöpaja',
+    labelEn: 'SK6C wood workshop',
+    category: 'workshop' as const,
+  },
+  {
+    emailPrefix: 'jmt10d_soitto',
+    labelFi: 'JMT10D-soittohuone',
+    labelEn: 'JMT10D music room',
+    category: 'music-room' as const,
+  },
+  {
+    emailPrefix: 'jmt11cd_varasto',
+    labelFi: 'Muuttolaatikot',
+    labelEn: 'Moving boxes',
+    category: 'storage' as const,
+  },
+  {
+    emailPrefix: 'jmt11m_kontti',
+    labelFi: 'Kajakit ja SUP-laudat',
+    labelEn: 'Kayaks and SUP-boards',
+    category: 'equipment' as const,
+  },
 ]
 
 // Finnish rules (saannot.txt)
@@ -790,10 +850,25 @@ const createHomePage = async (payload: any) => {
             root: {
               type: 'root',
               children: [
-                { type: 'heading', tag: 'h2', children: [{ type: 'text', text: 'Tilojen varaaminen' }] },
-                { type: 'paragraph', children: [{ type: 'text', text: 'Voit varata tiloja täyttämällä käyttöpyyntölomakkeen. Muista lukea säännöt ennen varauksen tekemistä.' }] },
+                {
+                  type: 'heading',
+                  tag: 'h2',
+                  children: [{ type: 'text', text: 'Tilojen varaaminen' }],
+                },
+                {
+                  type: 'paragraph',
+                  children: [
+                    {
+                      type: 'text',
+                      text: 'Voit varata tiloja täyttämällä käyttöpyyntölomakkeen. Muista lukea säännöt ennen varauksen tekemistä.',
+                    },
+                  ],
+                },
               ],
-              direction: 'ltr', format: '', indent: 0, version: 1,
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              version: 1,
             },
           },
         },
@@ -803,10 +878,25 @@ const createHomePage = async (payload: any) => {
             root: {
               type: 'root',
               children: [
-                { type: 'heading', tag: 'h2', children: [{ type: 'text', text: 'Avaimellisille' }] },
-                { type: 'paragraph', children: [{ type: 'text', text: 'Jos sinulla on jo avain, tutustu avaimellisten ohjeisiin ja sääntöihin.' }] },
+                {
+                  type: 'heading',
+                  tag: 'h2',
+                  children: [{ type: 'text', text: 'Avaimellisille' }],
+                },
+                {
+                  type: 'paragraph',
+                  children: [
+                    {
+                      type: 'text',
+                      text: 'Jos sinulla on jo avain, tutustu avaimellisten ohjeisiin ja sääntöihin.',
+                    },
+                  ],
+                },
               ],
-              direction: 'ltr', format: '', indent: 0, version: 1,
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              version: 1,
             },
           },
         },
@@ -815,8 +905,14 @@ const createHomePage = async (payload: any) => {
     {
       blockType: 'committee',
       title: 'Toimikunta',
-      description: 'OtaHoas-toimikunnan jäsenet valitaan vuosittain asukkaiden kokouksessa. Toimikunnan jäsenet 2026 ovat:',
-      members: committeeMembers.map(m => ({ name: m.name, title: m.title, telegram: m.telegram, image: null })),
+      description:
+        'OtaHoas-toimikunnan jäsenet valitaan vuosittain asukkaiden kokouksessa. Toimikunnan jäsenet 2026 ovat:',
+      members: committeeMembers.map((m) => ({
+        name: m.name,
+        title: m.title,
+        telegram: m.telegram,
+        image: null,
+      })),
     },
     {
       blockType: 'contactInfo',
@@ -870,10 +966,25 @@ const createHomePage = async (payload: any) => {
             root: {
               type: 'root',
               children: [
-                { type: 'heading', tag: 'h2', children: [{ type: 'text', text: 'Booking Spaces' }] },
-                { type: 'paragraph', children: [{ type: 'text', text: 'You can book spaces by filling out the access request form. Remember to read the rules before making a reservation.' }] },
+                {
+                  type: 'heading',
+                  tag: 'h2',
+                  children: [{ type: 'text', text: 'Booking Spaces' }],
+                },
+                {
+                  type: 'paragraph',
+                  children: [
+                    {
+                      type: 'text',
+                      text: 'You can book spaces by filling out the access request form. Remember to read the rules before making a reservation.',
+                    },
+                  ],
+                },
               ],
-              direction: 'ltr', format: '', indent: 0, version: 1,
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              version: 1,
             },
           },
         },
@@ -883,10 +994,25 @@ const createHomePage = async (payload: any) => {
             root: {
               type: 'root',
               children: [
-                { type: 'heading', tag: 'h2', children: [{ type: 'text', text: 'For Key Holders' }] },
-                { type: 'paragraph', children: [{ type: 'text', text: 'If you already have a key, check out the instructions and rules for key holders.' }] },
+                {
+                  type: 'heading',
+                  tag: 'h2',
+                  children: [{ type: 'text', text: 'For Key Holders' }],
+                },
+                {
+                  type: 'paragraph',
+                  children: [
+                    {
+                      type: 'text',
+                      text: 'If you already have a key, check out the instructions and rules for key holders.',
+                    },
+                  ],
+                },
               ],
-              direction: 'ltr', format: '', indent: 0, version: 1,
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              version: 1,
             },
           },
         },
@@ -895,8 +1021,14 @@ const createHomePage = async (payload: any) => {
     {
       blockType: 'committee',
       title: 'Committee',
-      description: 'OtaHoas committee members are elected annually at the residents\' meeting. The committee members for 2026 are:',
-      members: committeeMembers.map(m => ({ name: m.name, title: m.title, telegram: m.telegram, image: null })),
+      description:
+        "OtaHoas committee members are elected annually at the residents' meeting. The committee members for 2026 are:",
+      members: committeeMembers.map((m) => ({
+        name: m.name,
+        title: m.title,
+        telegram: m.telegram,
+        image: null,
+      })),
     },
     {
       blockType: 'contactInfo',
@@ -1030,8 +1162,8 @@ const setupNavigation = async (payload: any) => {
     createRefLink('avaimellisille', 'Avaimellisille', 'For Key Holders'),
   ]
 
-  const navItemsFi = navLinks.map(link => link.fi)
-  const navItemsEn = navLinks.map(link => link.en)
+  const navItemsFi = navLinks.map((link) => link.fi)
+  const navItemsEn = navLinks.map((link) => link.en)
 
   try {
     // Set Finnish header

@@ -31,7 +31,6 @@ pnpm db:reset pages media
 pnpm seed:pages-and-media
 ```
 
-
 Or directly in Docker:
 
 ```bash
