@@ -12,8 +12,7 @@ const getImageURL = (
 ) => {
   const serverUrl = getServerSideURL()
 
-  let url =
-    locale === 'en' ? `${serverUrl}/otahoas_banner_en.png` : `${serverUrl}/otahoas_banner_fi.png`
+  let url = `${serverUrl}/otahoas_banner_${locale}.png`
 
   if (image && typeof image === 'object' && 'url' in image) {
     const ogUrl = image.sizes?.og?.url
