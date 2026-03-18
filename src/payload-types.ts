@@ -216,6 +216,7 @@ export interface Page {
     | ContactInfoBlock
     | TilatBlock
     | ImageScrollerBlock
+    | ContentWithBannerBlock
   )[];
   meta?: {
     title?: string | null;
@@ -996,6 +997,38 @@ export interface ImageScrollerBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContentWithBannerBlock".
+ */
+export interface ContentWithBannerBlock {
+  widthRatio: 'balanced' | 'contentWide' | 'bannerWide';
+  items: {
+    title: string;
+    image: number | Media;
+    richText: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    linkToPage?: boolean | null;
+    linkedPage?: (number | null) | Page;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contentWithBanner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "reservation-targets".
  */
 export interface ReservationTarget {
@@ -1392,6 +1425,7 @@ export interface PagesSelect<T extends boolean = true> {
         contactInfo?: T | ContactInfoBlockSelect<T>;
         tilat?: T | TilatBlockSelect<T>;
         imageScroller?: T | ImageScrollerBlockSelect<T>;
+        contentWithBanner?: T | ContentWithBannerBlockSelect<T>;
       };
   meta?:
     | T
@@ -1587,6 +1621,25 @@ export interface ImageScrollerBlockSelect<T extends boolean = true> {
     | {
         image?: T;
         caption?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContentWithBannerBlock_select".
+ */
+export interface ContentWithBannerBlockSelect<T extends boolean = true> {
+  widthRatio?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        richText?: T;
+        linkToPage?: T;
+        linkedPage?: T;
         id?: T;
       };
   id?: T;

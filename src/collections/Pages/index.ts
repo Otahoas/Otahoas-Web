@@ -13,6 +13,7 @@ import { Committee } from '../../blocks/Committee/config'
 import { ContactInfo } from '../../blocks/ContactInfo/config'
 import { Tilat } from '../../blocks/Tilat/config'
 import { ImageScroller } from '../../blocks/ImageScroller/config'
+import { ContentWithBanner } from '../../blocks/ContentWithBanner/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -91,6 +92,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 ContactInfo,
                 Tilat,
                 ImageScroller,
+                ContentWithBanner,
               ],
               required: true,
               admin: {
