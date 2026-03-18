@@ -6,7 +6,7 @@ import { Media } from '@/components/Media'
 import { useTranslations } from 'next-intl'
 
 export const ImageScrollerBlock: React.FC<ImageScrollerBlockType> = (props) => {
-  const { displayMode = 'grid', images } = props
+  const { displayMode = 'grid', showTitle = true, images } = props
   const t = useTranslations('imageScroller')
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0)
@@ -24,8 +24,8 @@ export const ImageScrollerBlock: React.FC<ImageScrollerBlockType> = (props) => {
   const closeModal = () => setSelectedImageIndex(null)
 
   return (
-    <div className="container my-12">
-      <h2 className="mb-8 text-3xl font-bold">{t('title')}</h2>
+    <div>
+      {showTitle && <h2 className="mb-8 text-3xl font-bold">{t('title')}</h2>}
 
       {displayMode === 'grid' ? (
         <>

@@ -7,6 +7,11 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
+import { Committee } from '@/blocks/Committee/config'
+import { ContactInfo } from '@/blocks/ContactInfo/config'
+import { ImageScroller } from '@/blocks/ImageScroller/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
+
 import { link } from '@/fields/link'
 
 const columnFields: Field[] = [
@@ -48,6 +53,14 @@ const columnFields: Field[] = [
       },
     }),
     label: false,
+  },
+  {
+    name: 'blocks',
+    type: 'blocks',
+    admin: {
+      initCollapsed: true,
+    },
+    blocks: [MediaBlock, Committee, ContactInfo, ImageScroller],
   },
   {
     name: 'enableLink',

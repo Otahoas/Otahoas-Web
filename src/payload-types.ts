@@ -525,6 +525,7 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
+        blocks?: (MediaBlock | CommitteeBlock | ContactInfoBlock | ImageScrollerBlock)[] | null;
         enableLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -561,6 +562,80 @@ export interface MediaBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CommitteeBlock".
+ */
+export interface CommitteeBlock {
+  title: string;
+  /**
+   * Optional description shown above the member list
+   */
+  description?: string | null;
+  /**
+   * Contact email shown as a card in the grid
+   */
+  email?: string | null;
+  members: {
+    name: string;
+    /**
+     * Optional title/role (e.g., "Puheenjohtaja", "ASY")
+     */
+    title?: string | null;
+    /**
+     * Telegram username (without @)
+     */
+    telegram?: string | null;
+    /**
+     * Profile photo (optional)
+     */
+    image?: (number | null) | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'committee';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactInfoBlock".
+ */
+export interface ContactInfoBlock {
+  title: string;
+  links?:
+    | {
+        type: 'email' | 'telegram' | 'website';
+        /**
+         * Display text for the link
+         */
+        label: string;
+        /**
+         * Email address, Telegram link, or website URL
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactInfo';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageScrollerBlock".
+ */
+export interface ImageScrollerBlock {
+  displayMode?: ('grid' | 'carousel') | null;
+  showTitle?: boolean | null;
+  images: {
+    image: number | Media;
+    caption?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageScroller';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -922,21 +997,6 @@ export interface TilatBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'tilat';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageScrollerBlock".
- */
-export interface ImageScrollerBlock {
-  displayMode?: ('grid' | 'carousel') | null;
-  images: {
-    image: number | Media;
-    caption?: string | null;
-    id?: string | null;
-  }[];
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'imageScroller';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1431,6 +1491,14 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | {
         size?: T;
         richText?: T;
+        blocks?:
+          | T
+          | {
+              mediaBlock?: T | MediaBlockSelect<T>;
+              committee?: T | CommitteeBlockSelect<T>;
+              contactInfo?: T | ContactInfoBlockSelect<T>;
+              imageScroller?: T | ImageScrollerBlockSelect<T>;
+            };
         enableLink?: T;
         link?:
           | T
@@ -1453,6 +1521,60 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CommitteeBlock_select".
+ */
+export interface CommitteeBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  email?: T;
+  members?:
+    | T
+    | {
+        name?: T;
+        title?: T;
+        telegram?: T;
+        image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactInfoBlock_select".
+ */
+export interface ContactInfoBlockSelect<T extends boolean = true> {
+  title?: T;
+  links?:
+    | T
+    | {
+        type?: T;
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageScrollerBlock_select".
+ */
+export interface ImageScrollerBlockSelect<T extends boolean = true> {
+  displayMode?: T;
+  showTitle?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1525,22 +1647,6 @@ export interface TilatBlockSelect<T extends boolean = true> {
         linkedPage?: T;
         capacity?: T;
         additionalInfo?: T;
-        id?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageScrollerBlock_select".
- */
-export interface ImageScrollerBlockSelect<T extends boolean = true> {
-  displayMode?: T;
-  images?:
-    | T
-    | {
-        image?: T;
-        caption?: T;
         id?: T;
       };
   id?: T;
