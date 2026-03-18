@@ -4,14 +4,22 @@ import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { cn } from '@/utilities/ui'
-import type { Media as MediaType, Page } from '@/payload-types'
+import type { Media as MediaType, Page, Post } from '@/payload-types'
 
 type ContentWithBannerItem = {
   title?: string | null
   image?: MediaType | string | number | null
   richText?: Parameters<typeof RichText>[0]['data']
-  linkToPage?: boolean | null
-  linkedPage?: Page | string | number | null
+  enableLink?: boolean | null
+  link?: {
+    type?: 'reference' | 'custom' | null
+    reference?: {
+      relationTo: 'pages' | 'posts'
+      value: Page | Post | string | number
+    } | null
+    url?: string | null
+    newTab?: boolean | null
+  } | null
 }
 
 type ContentWithBannerBlockProps = {
@@ -49,13 +57,15 @@ export const ContentWithBannerBlock: React.FC<ContentWithBannerBlockProps> = ({
     <div className="container my-16">
       <div className="space-y-12">
         {items.map((item, index) => {
-          const hasPageLink = Boolean(item.linkToPage && item.linkedPage)
+          const hasLink = Boolean(
+            item.enableLink && item.link?.type && (item.link?.reference || item.link?.url),
+          )
 
           const sectionContent = (
             <section
               className={cn(
                 'grid grid-cols-1 gap-6 rounded-lg lg:grid-cols-12 lg:gap-10',
-                hasPageLink && 'p-4 transition-colors hover:bg-[rgb(238,182,170)]',
+                hasLink && 'p-4 transition-colors hover:bg-[rgb(238,182,170)]',
               )}
             >
               <div className={cn('contents lg:flex lg:flex-col lg:gap-4', ratioClasses.left)}>
@@ -83,16 +93,15 @@ export const ContentWithBannerBlock: React.FC<ContentWithBannerBlockProps> = ({
             </section>
           )
 
-          if (hasPageLink) {
+          if (hasLink && item.link) {
             return (
               <CMSLink
                 key={index}
                 appearance="inline"
-                type="reference"
-                reference={{
-                  relationTo: 'pages',
-                  value: item.linkedPage as Page | string | number,
-                }}
+                type={item.link.type}
+                reference={item.link.reference}
+                url={item.link.url}
+                newTab={item.link.newTab}
                 className="block"
               >
                 {sectionContent}

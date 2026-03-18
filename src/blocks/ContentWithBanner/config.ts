@@ -6,6 +6,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { link } from '@/fields/link'
 
 export const ContentWithBanner: Block = {
   slug: 'contentWithBanner',
@@ -70,19 +71,20 @@ export const ContentWithBanner: Block = {
           required: true,
         },
         {
-          name: 'linkToPage',
+          name: 'enableLink',
           type: 'checkbox',
-          label: 'Link to a page',
+          label: 'Enable link',
+          defaultValue: false,
         },
-        {
-          name: 'linkedPage',
-          type: 'relationship',
-          relationTo: 'pages',
-          required: true,
-          admin: {
-            condition: (_data, siblingData) => Boolean(siblingData?.linkToPage),
+        link({
+          appearances: false,
+          disableLabel: true,
+          overrides: {
+            admin: {
+              condition: (_data, siblingData) => Boolean(siblingData?.enableLink),
+            },
           },
-        },
+        }),
       ],
     },
   ],

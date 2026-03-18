@@ -886,67 +886,10 @@ export interface AccessRequestFormBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CommitteeBlock".
- */
-export interface CommitteeBlock {
-  title: string;
-  /**
-   * Optional description shown above the member list
-   */
-  description?: string | null;
-  /**
-   * Contact email shown as a card in the grid
-   */
-  email?: string | null;
-  members: {
-    name: string;
-    /**
-     * Optional title/role (e.g., "Puheenjohtaja", "ASY")
-     */
-    title?: string | null;
-    /**
-     * Telegram username (without @)
-     */
-    telegram?: string | null;
-    /**
-     * Profile photo (optional)
-     */
-    image?: (number | null) | Media;
-    id?: string | null;
-  }[];
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'committee';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContactInfoBlock".
- */
-export interface ContactInfoBlock {
-  title: string;
-  links?:
-    | {
-        type: 'email' | 'telegram' | 'website';
-        /**
-         * Display text for the link
-         */
-        label: string;
-        /**
-         * Email address, Telegram link, or website URL
-         */
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'contactInfo';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TilatBlock".
  */
 export interface TilatBlock {
+  anchorId?: string | null;
   title?: string | null;
   spaces?:
     | {
@@ -1019,8 +962,21 @@ export interface ContentWithBannerBlock {
       };
       [k: string]: unknown;
     };
-    linkToPage?: boolean | null;
-    linkedPage?: (number | null) | Page;
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      url?: string | null;
+    };
     id?: string | null;
   }[];
   id?: string | null;
@@ -1555,46 +1511,10 @@ export interface AccessRequestFormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CommitteeBlock_select".
- */
-export interface CommitteeBlockSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  email?: T;
-  members?:
-    | T
-    | {
-        name?: T;
-        title?: T;
-        telegram?: T;
-        image?: T;
-        id?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContactInfoBlock_select".
- */
-export interface ContactInfoBlockSelect<T extends boolean = true> {
-  title?: T;
-  links?:
-    | T
-    | {
-        type?: T;
-        label?: T;
-        url?: T;
-        id?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TilatBlock_select".
  */
 export interface TilatBlockSelect<T extends boolean = true> {
+  anchorId?: T;
   title?: T;
   spaces?:
     | T
@@ -1638,8 +1558,15 @@ export interface ContentWithBannerBlockSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         richText?: T;
-        linkToPage?: T;
-        linkedPage?: T;
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+            };
         id?: T;
       };
   id?: T;

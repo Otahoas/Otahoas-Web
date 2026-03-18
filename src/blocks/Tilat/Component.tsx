@@ -8,7 +8,7 @@ import { CMSLink } from '@/components/Link'
 import { useLocale, useTranslations } from 'next-intl'
 
 export const TilatBlock: React.FC<TilatBlockType> = (props) => {
-  const { spaces, title } = props
+  const { spaces, title, anchorId } = props
   const t = useTranslations('spaces')
   const locale = useLocale() as Locale
 
@@ -17,7 +17,7 @@ export const TilatBlock: React.FC<TilatBlockType> = (props) => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto" id={anchorId || undefined}>
       {title && <h2 className="mb-6 text-2xl font-semibold">{title}</h2>}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {spaces.map((space, index) => (

@@ -11,6 +11,11 @@ export const Tilat: Block = {
   interfaceName: 'TilatBlock',
   fields: [
     {
+      name: 'anchorId',
+      label: 'Anchor Tag ID',
+      type: 'text',
+    },
+    {
       name: 'title',
       type: 'text',
       label: 'Title',
