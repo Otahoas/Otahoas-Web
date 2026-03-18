@@ -63,7 +63,7 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
 
   return (
     <div className="container my-16">
-      <div className="rounded-lg bg-[rgb(249,109,82)] p-6">
+      <div className="rounded-lg bg-[rgb(249,109,82)] p-6 dark:bg-[rgb(84,7,5)]">
         <div className="mb-6 flex items-center justify-between gap-4">
           {title ? <h2 className="text-4xl font-semibold">{title}</h2> : <div />}
 
