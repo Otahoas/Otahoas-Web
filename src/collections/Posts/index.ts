@@ -81,6 +81,13 @@ export const Posts: CollectionConfig<'posts'> = {
               name: 'heroImage',
               type: 'upload',
               relationTo: 'media',
+              label: 'Banner image',
+            },
+            {
+              name: 'abstract',
+              type: 'textarea',
+              localized: true,
+              label: 'Abstract',
             },
             {
               name: 'content',
@@ -99,7 +106,7 @@ export const Posts: CollectionConfig<'posts'> = {
                 },
               }),
               label: false,
-              required: true,
+              required: false,
             },
           ],
           label: 'Content',

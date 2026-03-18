@@ -7,10 +7,10 @@ import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
+import { Media } from '@/components/Media'
 
 import type { Post } from '@/payload-types'
 
-import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -33,6 +33,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   const decodedSlug = decodeURIComponent(slug)
   const url = '/posts/' + decodedSlug
   const post = await queryPostBySlug({ slug: decodedSlug, locale: locale as Locale })
+  const abstractText = post?.abstract
 
   if (!post) return <PayloadRedirects url={url} />
 
@@ -45,11 +46,31 @@ export default async function Post({ params: paramsPromise }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <PostHero post={post} />
+      <div className="container">
+        <div className="mx-auto max-w-[48rem] space-y-6">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl">{post.title}</h1>
 
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="container">
-          <RichText className="mx-auto max-w-[48rem]" data={post.content} enableGutter={false} />
+          {abstractText && (
+            <p className="text-lg leading-relaxed text-muted-foreground">{abstractText}</p>
+          )}
+
+          {post.heroImage && typeof post.heroImage !== 'string' && (
+            <div className="w-full overflow-hidden rounded-lg">
+              <Media
+                resource={post.heroImage}
+                className="h-full w-full"
+                imgClassName="h-full w-full object-contain"
+                priority
+              />
+            </div>
+          )}
+
+          {post.content && post.content.root?.children?.length > 0 && (
+            <>
+              <RichText data={post.content} enableGutter={false} />
+            </>
+          )}
+
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <RelatedPosts
               className="col-span-3 col-start-1 mt-12 max-w-[52rem] grid-rows-[2fr] lg:grid lg:grid-cols-subgrid"

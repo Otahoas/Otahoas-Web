@@ -14,6 +14,7 @@ import { ContactInfoBlock } from '@/blocks/ContactInfo/Component'
 import { TilatBlock } from '@/blocks/Tilat/Component'
 import { ImageScrollerBlock } from '@/blocks/ImageScroller/Component'
 import { ContentWithBannerBlock } from '@/blocks/ContentWithBanner/Component'
+import { PostsCarouselBlock } from '@/blocks/PostsCarousel/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -28,6 +29,7 @@ const blockComponents = {
   tilat: TilatBlock,
   imageScroller: ImageScrollerBlock,
   contentWithBanner: ContentWithBannerBlock,
+  postsCarousel: PostsCarouselBlock,
 }
 
 export const RenderBlocks: React.FC<{

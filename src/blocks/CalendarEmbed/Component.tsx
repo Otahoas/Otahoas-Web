@@ -11,7 +11,7 @@ interface CalendarData {
 }
 
 export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => {
-  const { calendarUrl, title, useCombinedCalendars, publicEventsCalendarId } = props
+  const { calendarUrl, title, useCombinedCalendars, publicEventsCalendarId, defaultView } = props
   const height = props.height ?? 600
   const language = props.language ?? 'fi'
 
@@ -59,7 +59,7 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
         }
 
         // Build the combined Google Calendar embed URL
-        const url = buildCombinedCalendarUrl(allCalendars, language)
+        const url = buildCombinedCalendarUrl(allCalendars, language, defaultView ?? 'month')
         setCombinedCalendarUrl(url)
       } catch (err) {
         console.error('Failed to fetch calendars:', err)
@@ -72,7 +72,7 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
     }
 
     fetchCalendars()
-  }, [useCombinedCalendars, language, publicEventsCalendarId])
+  }, [useCombinedCalendars, language, publicEventsCalendarId, defaultView])
 
   // Ensure the URL has the correct language parameter for single calendar mode
   const processedUrl = React.useMemo(() => {
@@ -85,12 +85,13 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
     try {
       const url = new URL(calendarUrl)
       url.searchParams.set('hl', language)
+      url.searchParams.set('mode', mapDefaultViewToGoogleMode(defaultView ?? 'month'))
       return url.toString()
     } catch {
       // If URL parsing fails, return as-is
       return calendarUrl
     }
-  }, [calendarUrl, language, useCombinedCalendars, combinedCalendarUrl])
+  }, [calendarUrl, language, useCombinedCalendars, combinedCalendarUrl, defaultView])
 
   // Show loading state for combined calendars
   if (useCombinedCalendars && loading) {
@@ -156,7 +157,11 @@ export const CalendarEmbedBlock: React.FC<CalendarEmbedBlockProps> = (props) => 
   )
 }
 
-function buildCombinedCalendarUrl(calendars: CalendarData[], language: string): string {
+function buildCombinedCalendarUrl(
+  calendars: CalendarData[],
+  language: string,
+  defaultView: 'month' | 'week' | 'schedule',
+): string {
   const baseUrl = new URL('https://calendar.google.com/calendar/embed')
 
   // Set base parameters
@@ -170,6 +175,7 @@ function buildCombinedCalendarUrl(calendars: CalendarData[], language: string): 
   baseUrl.searchParams.set('showDate', '1')
   baseUrl.searchParams.set('showNav', '1')
   baseUrl.searchParams.set('showTz', '1')
+  baseUrl.searchParams.set('mode', mapDefaultViewToGoogleMode(defaultView))
   baseUrl.searchParams.set('title', 'OtaHoas')
 
   // Add each calendar as a src parameter with its color
@@ -179,4 +185,10 @@ function buildCombinedCalendarUrl(calendars: CalendarData[], language: string): 
   })
 
   return baseUrl.toString()
+}
+
+function mapDefaultViewToGoogleMode(defaultView: 'month' | 'week' | 'schedule'): string {
+  if (defaultView === 'week') return 'WEEK'
+  if (defaultView === 'schedule') return 'AGENDA'
+  return 'MONTH'
 }

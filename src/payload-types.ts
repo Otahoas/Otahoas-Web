@@ -217,6 +217,7 @@ export interface Page {
     | TilatBlock
     | ImageScrollerBlock
     | ContentWithBannerBlock
+    | PostsCarouselBlock
   )[];
   meta?: {
     title?: string | null;
@@ -244,7 +245,8 @@ export interface Post {
   id: number;
   title: string;
   heroImage?: (number | null) | Media;
-  content: {
+  abstract?: string | null;
+  content?: {
     root: {
       type: string;
       children: {
@@ -258,7 +260,7 @@ export interface Post {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   relatedPosts?: (number | Post)[] | null;
   categories?: (number | Category)[] | null;
   meta?: {
@@ -584,6 +586,10 @@ export interface CalendarEmbedBlock {
    * Calendar height in pixels
    */
   height?: number | null;
+  /**
+   * Default calendar view mode
+   */
+  defaultView?: ('month' | 'week' | 'schedule') | null;
   language?: ('fi' | 'en') | null;
   /**
    * Optional title shown above the calendar
@@ -1045,6 +1051,23 @@ export interface ContentWithBannerBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostsCarouselBlock".
+ */
+export interface PostsCarouselBlock {
+  /**
+   * Optional heading shown above the posts carousel
+   */
+  title?: string | null;
+  /**
+   * Maximum number of latest posts to show
+   */
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'postsCarousel';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "reservation-targets".
  */
 export interface ReservationTarget {
@@ -1442,6 +1465,7 @@ export interface PagesSelect<T extends boolean = true> {
         tilat?: T | TilatBlockSelect<T>;
         imageScroller?: T | ImageScrollerBlockSelect<T>;
         contentWithBanner?: T | ContentWithBannerBlockSelect<T>;
+        postsCarousel?: T | PostsCarouselBlockSelect<T>;
       };
   meta?:
     | T
@@ -1534,6 +1558,7 @@ export interface CalendarEmbedBlockSelect<T extends boolean = true> {
   calendarUrl?: T;
   publicEventsCalendarId?: T;
   height?: T;
+  defaultView?: T;
   language?: T;
   title?: T;
   id?: T;
@@ -1681,11 +1706,22 @@ export interface ContentWithBannerBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostsCarouselBlock_select".
+ */
+export interface PostsCarouselBlockSelect<T extends boolean = true> {
+  title?: T;
+  limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   heroImage?: T;
+  abstract?: T;
   content?: T;
   relatedPosts?: T;
   categories?: T;
