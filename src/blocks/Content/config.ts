@@ -7,6 +7,7 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
+import { CalendarEmbed } from '@/blocks/CalendarEmbed/config'
 import { Committee } from '@/blocks/Committee/config'
 import { ContactInfo } from '@/blocks/ContactInfo/config'
 import { ImageScroller } from '@/blocks/ImageScroller/config'
@@ -60,7 +61,7 @@ const columnFields: Field[] = [
     admin: {
       initCollapsed: true,
     },
-    blocks: [MediaBlock, Committee, ContactInfo, ImageScroller],
+    blocks: [MediaBlock, CalendarEmbed, Committee, ContactInfo, ImageScroller],
   },
   {
     name: 'enableLink',

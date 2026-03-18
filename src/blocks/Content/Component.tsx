@@ -2,6 +2,7 @@ import { cn } from '@/utilities/ui'
 import React from 'react'
 import RichText from '@/components/RichText'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { CalendarEmbedBlock } from '@/blocks/CalendarEmbed/Component'
 import { CommitteeBlock } from '@/blocks/Committee/Component'
 import { ContactInfoBlock } from '@/blocks/ContactInfo/Component'
 import { ImageScrollerBlock } from '@/blocks/ImageScroller/Component'
@@ -12,6 +13,7 @@ import { CMSLink } from '../../components/Link'
 
 const nestedBlockComponents = {
   mediaBlock: MediaBlock,
+  calendarEmbed: CalendarEmbedBlock,
   committee: CommitteeBlock,
   contactInfo: ContactInfoBlock,
   imageScroller: ImageScrollerBlock,

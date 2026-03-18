@@ -525,7 +525,7 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
-        blocks?: (MediaBlock | CommitteeBlock | ContactInfoBlock | ImageScrollerBlock)[] | null;
+        blocks?: (MediaBlock | CalendarEmbedBlock | CommitteeBlock | ContactInfoBlock | ImageScrollerBlock)[] | null;
         enableLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -562,6 +562,36 @@ export interface MediaBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CalendarEmbedBlock".
+ */
+export interface CalendarEmbedBlock {
+  /**
+   * If checked, combines all Google calendars from active Reservation Targets instead of using a single URL
+   */
+  useCombinedCalendars?: boolean | null;
+  /**
+   * Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)
+   */
+  calendarUrl?: string | null;
+  /**
+   * Public events Google Calendar ID (e.g., example@group.calendar.google.com). This calendar will be combined with reservation target calendars.
+   */
+  publicEventsCalendarId?: string | null;
+  /**
+   * Calendar height in pixels
+   */
+  height?: number | null;
+  language?: ('fi' | 'en') | null;
+  /**
+   * Optional title shown above the calendar
+   */
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'calendarEmbed';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -870,36 +900,6 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CalendarEmbedBlock".
- */
-export interface CalendarEmbedBlock {
-  /**
-   * If checked, combines all Google calendars from active Reservation Targets instead of using a single URL
-   */
-  useCombinedCalendars?: boolean | null;
-  /**
-   * Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)
-   */
-  calendarUrl?: string | null;
-  /**
-   * Public events Google Calendar ID (e.g., example@group.calendar.google.com). This calendar will be combined with reservation target calendars.
-   */
-  publicEventsCalendarId?: string | null;
-  /**
-   * Calendar height in pixels
-   */
-  height?: number | null;
-  language?: ('fi' | 'en') | null;
-  /**
-   * Optional title shown above the calendar
-   */
-  title?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'calendarEmbed';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1495,6 +1495,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
           | T
           | {
               mediaBlock?: T | MediaBlockSelect<T>;
+              calendarEmbed?: T | CalendarEmbedBlockSelect<T>;
               committee?: T | CommitteeBlockSelect<T>;
               contactInfo?: T | ContactInfoBlockSelect<T>;
               imageScroller?: T | ImageScrollerBlockSelect<T>;
@@ -1521,6 +1522,20 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CalendarEmbedBlock_select".
+ */
+export interface CalendarEmbedBlockSelect<T extends boolean = true> {
+  useCombinedCalendars?: T;
+  calendarUrl?: T;
+  publicEventsCalendarId?: T;
+  height?: T;
+  language?: T;
+  title?: T;
   id?: T;
   blockName?: T;
 }
@@ -1600,20 +1615,6 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CalendarEmbedBlock_select".
- */
-export interface CalendarEmbedBlockSelect<T extends boolean = true> {
-  useCombinedCalendars?: T;
-  calendarUrl?: T;
-  publicEventsCalendarId?: T;
-  height?: T;
-  language?: T;
-  title?: T;
   id?: T;
   blockName?: T;
 }
