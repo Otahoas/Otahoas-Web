@@ -65,7 +65,8 @@ export const ContentWithBannerBlock: React.FC<ContentWithBannerBlockProps> = ({
             <section
               className={cn(
                 'grid grid-cols-1 gap-6 rounded-lg lg:grid-cols-12 lg:gap-10',
-                hasLink && 'p-4 transition-colors hover:bg-[rgb(238,182,170)]',
+                hasLink &&
+                  'p-4 transition-colors hover:bg-[rgb(238,182,170)] dark:hover:bg-[rgb(37,4,2)]',
               )}
             >
               <div className={cn('contents lg:flex lg:flex-col lg:gap-4', ratioClasses.left)}>
