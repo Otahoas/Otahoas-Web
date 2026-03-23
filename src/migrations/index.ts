@@ -4,6 +4,7 @@ import * as migration_20260301_add_public_events_calendar_id from './20260301_ad
 import * as migration_20260316_135646 from './20260316_135646'
 import * as migration_20260316_222703 from './20260316_222703'
 import * as migration_20260316_224341 from './20260316_224341'
+import * as migration_20260323_190456 from './20260323_190456'
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260316_224341.up,
     down: migration_20260316_224341.down,
     name: '20260316_224341',
+  },
+  {
+    up: migration_20260323_190456.up,
+    down: migration_20260323_190456.down,
+    name: '20260323_190456',
   },
 ]
