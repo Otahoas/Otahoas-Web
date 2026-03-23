@@ -216,6 +216,8 @@ export interface Page {
     | ContactInfoBlock
     | TilatBlock
     | ImageScrollerBlock
+    | ContentWithBannerBlock
+    | PostsCarouselBlock
   )[];
   meta?: {
     title?: string | null;
@@ -243,7 +245,8 @@ export interface Post {
   id: number;
   title: string;
   heroImage?: (number | null) | Media;
-  content: {
+  abstract?: string | null;
+  content?: {
     root: {
       type: string;
       children: {
@@ -257,7 +260,7 @@ export interface Post {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   relatedPosts?: (number | Post)[] | null;
   categories?: (number | Category)[] | null;
   meta?: {
@@ -524,6 +527,7 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
+        blocks?: (MediaBlock | CalendarEmbedBlock | CommitteeBlock | ContactInfoBlock | ImageScrollerBlock)[] | null;
         enableLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -560,6 +564,114 @@ export interface MediaBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CalendarEmbedBlock".
+ */
+export interface CalendarEmbedBlock {
+  /**
+   * If checked, combines all Google calendars from active Reservation Targets instead of using a single URL
+   */
+  useCombinedCalendars?: boolean | null;
+  /**
+   * Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)
+   */
+  calendarUrl?: string | null;
+  /**
+   * Public events Google Calendar ID (e.g., example@group.calendar.google.com). This calendar will be combined with reservation target calendars.
+   */
+  publicEventsCalendarId?: string | null;
+  /**
+   * Calendar height in pixels
+   */
+  height?: number | null;
+  /**
+   * Default calendar view mode
+   */
+  defaultView?: ('month' | 'week' | 'schedule') | null;
+  language?: ('fi' | 'en') | null;
+  /**
+   * Optional title shown above the calendar
+   */
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'calendarEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CommitteeBlock".
+ */
+export interface CommitteeBlock {
+  title: string;
+  /**
+   * Optional description shown above the member list
+   */
+  description?: string | null;
+  /**
+   * Contact email shown as a card in the grid
+   */
+  email?: string | null;
+  members: {
+    name: string;
+    /**
+     * Optional title/role (e.g., "Puheenjohtaja", "ASY")
+     */
+    title?: string | null;
+    /**
+     * Telegram username (without @)
+     */
+    telegram?: string | null;
+    /**
+     * Profile photo (optional)
+     */
+    image?: (number | null) | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'committee';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactInfoBlock".
+ */
+export interface ContactInfoBlock {
+  title: string;
+  links?:
+    | {
+        type: 'email' | 'telegram' | 'website';
+        /**
+         * Display text for the link
+         */
+        label: string;
+        /**
+         * Email address, Telegram link, or website URL
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactInfo';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageScrollerBlock".
+ */
+export interface ImageScrollerBlock {
+  displayMode?: ('grid' | 'carousel') | null;
+  showTitle?: boolean | null;
+  images: {
+    image: number | Media;
+    caption?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageScroller';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -797,36 +909,6 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CalendarEmbedBlock".
- */
-export interface CalendarEmbedBlock {
-  /**
-   * If checked, combines all Google calendars from active Reservation Targets instead of using a single URL
-   */
-  useCombinedCalendars?: boolean | null;
-  /**
-   * Google Calendar embed URL (get from Google Calendar settings → Integrate calendar)
-   */
-  calendarUrl?: string | null;
-  /**
-   * Public events Google Calendar ID (e.g., example@group.calendar.google.com). This calendar will be combined with reservation target calendars.
-   */
-  publicEventsCalendarId?: string | null;
-  /**
-   * Calendar height in pixels
-   */
-  height?: number | null;
-  language?: ('fi' | 'en') | null;
-  /**
-   * Optional title shown above the calendar
-   */
-  title?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'calendarEmbed';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "AccessRequestFormBlock".
  */
 export interface AccessRequestFormBlock {
@@ -885,67 +967,10 @@ export interface AccessRequestFormBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CommitteeBlock".
- */
-export interface CommitteeBlock {
-  title: string;
-  /**
-   * Optional description shown above the member list
-   */
-  description?: string | null;
-  /**
-   * Contact email shown as a card in the grid
-   */
-  email?: string | null;
-  members: {
-    name: string;
-    /**
-     * Optional title/role (e.g., "Puheenjohtaja", "ASY")
-     */
-    title?: string | null;
-    /**
-     * Telegram username (without @)
-     */
-    telegram?: string | null;
-    /**
-     * Profile photo (optional)
-     */
-    image?: (number | null) | Media;
-    id?: string | null;
-  }[];
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'committee';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContactInfoBlock".
- */
-export interface ContactInfoBlock {
-  title: string;
-  links?:
-    | {
-        type: 'email' | 'telegram' | 'website';
-        /**
-         * Display text for the link
-         */
-        label: string;
-        /**
-         * Email address, Telegram link, or website URL
-         */
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'contactInfo';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TilatBlock".
  */
 export interface TilatBlock {
+  anchorId?: string | null;
   title?: string | null;
   spaces?:
     | {
@@ -981,18 +1006,65 @@ export interface TilatBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageScrollerBlock".
+ * via the `definition` "ContentWithBannerBlock".
  */
-export interface ImageScrollerBlock {
-  displayMode?: ('grid' | 'carousel') | null;
-  images: {
+export interface ContentWithBannerBlock {
+  widthRatio: 'balanced' | 'contentWide' | 'bannerWide';
+  items: {
+    title: string;
     image: number | Media;
-    caption?: string | null;
+    richText: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      url?: string | null;
+    };
     id?: string | null;
   }[];
   id?: string | null;
   blockName?: string | null;
-  blockType: 'imageScroller';
+  blockType: 'contentWithBanner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostsCarouselBlock".
+ */
+export interface PostsCarouselBlock {
+  /**
+   * Optional heading shown above the posts carousel
+   */
+  title?: string | null;
+  /**
+   * Maximum number of latest posts to show
+   */
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'postsCarousel';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1392,6 +1464,8 @@ export interface PagesSelect<T extends boolean = true> {
         contactInfo?: T | ContactInfoBlockSelect<T>;
         tilat?: T | TilatBlockSelect<T>;
         imageScroller?: T | ImageScrollerBlockSelect<T>;
+        contentWithBanner?: T | ContentWithBannerBlockSelect<T>;
+        postsCarousel?: T | PostsCarouselBlockSelect<T>;
       };
   meta?:
     | T
@@ -1441,6 +1515,15 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | {
         size?: T;
         richText?: T;
+        blocks?:
+          | T
+          | {
+              mediaBlock?: T | MediaBlockSelect<T>;
+              calendarEmbed?: T | CalendarEmbedBlockSelect<T>;
+              committee?: T | CommitteeBlockSelect<T>;
+              contactInfo?: T | ContactInfoBlockSelect<T>;
+              imageScroller?: T | ImageScrollerBlockSelect<T>;
+            };
         enableLink?: T;
         link?:
           | T
@@ -1468,31 +1551,6 @@ export interface MediaBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock_select".
- */
-export interface ArchiveBlockSelect<T extends boolean = true> {
-  introContent?: T;
-  populateBy?: T;
-  relationTo?: T;
-  categories?: T;
-  limit?: T;
-  selectedDocs?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FormBlock_select".
- */
-export interface FormBlockSelect<T extends boolean = true> {
-  form?: T;
-  enableIntro?: T;
-  introContent?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CalendarEmbedBlock_select".
  */
 export interface CalendarEmbedBlockSelect<T extends boolean = true> {
@@ -1500,22 +1558,9 @@ export interface CalendarEmbedBlockSelect<T extends boolean = true> {
   calendarUrl?: T;
   publicEventsCalendarId?: T;
   height?: T;
+  defaultView?: T;
   language?: T;
   title?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "AccessRequestFormBlock_select".
- */
-export interface AccessRequestFormBlockSelect<T extends boolean = true> {
-  language?: T;
-  introContent?: T;
-  rulesPageLink?: T;
-  spacesInfoLink?: T;
-  calendarLink?: T;
-  confirmationMessage?: T;
   id?: T;
   blockName?: T;
 }
@@ -1558,9 +1603,66 @@ export interface ContactInfoBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageScrollerBlock_select".
+ */
+export interface ImageScrollerBlockSelect<T extends boolean = true> {
+  displayMode?: T;
+  showTitle?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArchiveBlock_select".
+ */
+export interface ArchiveBlockSelect<T extends boolean = true> {
+  introContent?: T;
+  populateBy?: T;
+  relationTo?: T;
+  categories?: T;
+  limit?: T;
+  selectedDocs?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FormBlock_select".
+ */
+export interface FormBlockSelect<T extends boolean = true> {
+  form?: T;
+  enableIntro?: T;
+  introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccessRequestFormBlock_select".
+ */
+export interface AccessRequestFormBlockSelect<T extends boolean = true> {
+  language?: T;
+  introContent?: T;
+  rulesPageLink?: T;
+  spacesInfoLink?: T;
+  calendarLink?: T;
+  confirmationMessage?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TilatBlock_select".
  */
 export interface TilatBlockSelect<T extends boolean = true> {
+  anchorId?: T;
   title?: T;
   spaces?:
     | T
@@ -1578,17 +1680,37 @@ export interface TilatBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageScrollerBlock_select".
+ * via the `definition` "ContentWithBannerBlock_select".
  */
-export interface ImageScrollerBlockSelect<T extends boolean = true> {
-  displayMode?: T;
-  images?:
+export interface ContentWithBannerBlockSelect<T extends boolean = true> {
+  widthRatio?: T;
+  items?:
     | T
     | {
+        title?: T;
         image?: T;
-        caption?: T;
+        richText?: T;
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+            };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostsCarouselBlock_select".
+ */
+export interface PostsCarouselBlockSelect<T extends boolean = true> {
+  title?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }
@@ -1599,6 +1721,7 @@ export interface ImageScrollerBlockSelect<T extends boolean = true> {
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   heroImage?: T;
+  abstract?: T;
   content?: T;
   relatedPosts?: T;
   categories?: T;

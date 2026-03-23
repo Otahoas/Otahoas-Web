@@ -21,6 +21,12 @@ export const ImageScroller: Block = {
       ],
     },
     {
+      name: 'showTitle',
+      type: 'checkbox',
+      label: 'Show title',
+      defaultValue: true,
+    },
+    {
       name: 'images',
       type: 'array',
       label: 'Images',

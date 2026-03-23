@@ -44,6 +44,19 @@ export const CalendarEmbed: Block = {
       },
     },
     {
+      name: 'defaultView',
+      type: 'select',
+      defaultValue: 'month',
+      options: [
+        { label: 'Month', value: 'month' },
+        { label: 'Week', value: 'week' },
+        { label: 'Schedule', value: 'schedule' },
+      ],
+      admin: {
+        description: 'Default calendar view mode',
+      },
+    },
+    {
       name: 'language',
       type: 'select',
       defaultValue: 'fi',
