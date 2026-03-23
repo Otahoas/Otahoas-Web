@@ -37,6 +37,7 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
+            set -e
             cd /home/otahoas/Otahoas-Web/
 
             git fetch origin main
@@ -48,8 +49,11 @@ jobs:
             # Run database migrations
             docker compose -f docker-compose.prod.yml run --rm migrate
 
-            # Replace containers (minimal downtime)
+            # Replace containers
             docker compose -f docker-compose.prod.yml up -d
+
+            # Reload nginx so it re-resolves the app container's new IP
+            docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
 
             # Clean up old images
             docker image prune -f
