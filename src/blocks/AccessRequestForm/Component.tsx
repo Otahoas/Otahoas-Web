@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import type { AccessRequestFormBlock as AccessRequestFormBlockProps } from '@/payload-types'
 import RichText from '@/components/RichText'
-import { type Locale } from '@/i18n/config'
+import { useLocale } from 'next-intl'
 import { localizeInternalHref } from '@/utilities/localizedHref'
+import { type Locale } from '@/i18n/config'
 import {
   Select,
   SelectContent,
@@ -216,28 +217,10 @@ const dateToISO = (dateValue: string): string => {
 }
 
 export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (props) => {
-  const {
-    language = 'fi',
-    introContent,
-    rulesPageLink,
-    spacesInfoLink,
-    calendarLink,
-    confirmationMessage,
-  } = props
+  const { introContent, rulesPageLink, spacesInfoLink, calendarLink, confirmationMessage } = props
 
-  const t = translations[language as 'fi' | 'en'] || translations.fi
-  //We set the locale for the links based on the language of the form, not the language of the page to keep consistency
-  const locale: Locale = language === 'en' ? 'en' : 'fi'
-
-  const rulesPageHref = rulesPageLink
-    ? localizeInternalHref({ href: rulesPageLink, locale })
-    : undefined
-  const spacesInfoHref = spacesInfoLink
-    ? localizeInternalHref({ href: spacesInfoLink, locale })
-    : undefined
-  const calendarHref = calendarLink
-    ? localizeInternalHref({ href: calendarLink, locale })
-    : undefined
+  const locale = useLocale() as Locale
+  const t = translations[locale] || translations.fi
 
   const [targets, setTargets] = useState<ReservationTarget[]>([])
   const [loadingTargets, setLoadingTargets] = useState(true)
@@ -352,7 +335,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          language,
+          language: locale,
           startDate: dateToISO(formData.startDate),
           endDate: dateToISO(formData.endDate),
           participants: formData.participants ? parseInt(formData.participants, 10) : undefined,
@@ -390,7 +373,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
       console.error('Submit error:', error)
       setSubmitResult({
         success: false,
-        message: language === 'fi' ? 'Virhe lähetyksessä' : 'Submission error',
+        message: locale === 'fi' ? 'Virhe lähetyksessä' : 'Submission error',
       })
     } finally {
       setIsSubmitting(false)
@@ -427,30 +410,30 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
       )}
 
       {/* Quick Links */}
-      {(rulesPageHref || spacesInfoHref || calendarHref) && (
+      {(rulesPageLink || spacesInfoLink || calendarLink) && (
         <div className="mx-auto mb-8 flex max-w-2xl flex-wrap gap-4">
-          {rulesPageHref && (
+          {rulesPageLink && (
             <a
-              href={rulesPageHref}
+              href={localizeInternalHref({ href: rulesPageLink, locale })}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
-              {language === 'fi' ? 'Säännöt' : 'Rules'}
+              {locale === 'fi' ? 'Säännöt' : 'Rules'}
             </a>
           )}
-          {spacesInfoHref && (
+          {spacesInfoLink && (
             <a
-              href={spacesInfoHref}
+              href={localizeInternalHref({ href: spacesInfoLink, locale })}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
-              {language === 'fi' ? 'Tilat' : 'Spaces'}
+              {locale === 'fi' ? 'Tilat' : 'Spaces'}
             </a>
           )}
-          {calendarHref && (
+          {calendarLink && (
             <a
-              href={calendarHref}
+              href={localizeInternalHref({ href: calendarLink, locale })}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
-              {language === 'fi' ? 'Kalenteri' : 'Calendar'}
+              {locale === 'fi' ? 'Kalenteri' : 'Calendar'}
             </a>
           )}
         </div>
@@ -506,7 +489,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                           key={target.id}
                           value={String(target.id)}
                         >
-                          {language === 'fi' ? target.labelFi : target.labelEn}
+                          {locale === 'fi' ? target.labelFi : target.labelEn}
                         </SelectItem>
                       ))}
                     </SelectGroup>

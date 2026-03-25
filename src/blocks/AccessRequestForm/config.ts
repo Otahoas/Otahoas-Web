@@ -16,17 +16,6 @@ export const AccessRequestForm: Block = {
   },
   fields: [
     {
-      name: 'language',
-      type: 'select',
-      defaultValue: 'fi',
-      localized: true,
-      required: true,
-      options: [
-        { label: 'Suomi', value: 'fi' },
-        { label: 'English', value: 'en' },
-      ],
-    },
-    {
       name: 'introContent',
       type: 'richText',
       label: 'Introduction Content',

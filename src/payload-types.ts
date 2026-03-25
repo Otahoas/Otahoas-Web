@@ -912,7 +912,6 @@ export interface Form {
  * via the `definition` "AccessRequestFormBlock".
  */
 export interface AccessRequestFormBlock {
-  language: 'fi' | 'en';
   /**
    * Content shown above the form (rules, guidelines, etc.)
    */
@@ -1648,7 +1647,6 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "AccessRequestFormBlock_select".
  */
 export interface AccessRequestFormBlockSelect<T extends boolean = true> {
-  language?: T;
   introContent?: T;
   rulesPageLink?: T;
   spacesInfoLink?: T;
