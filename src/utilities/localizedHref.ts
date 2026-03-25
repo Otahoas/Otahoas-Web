@@ -11,7 +11,13 @@ export const buildInternalDocPath = ({
   relationTo: InternalRelation
   slug: string
 }) => {
-  return relationTo === 'posts' ? `/posts/${slug}` : `/${slug}`
+  const normalizedSlug = typeof slug === 'string' ? slug.trim() : ''
+
+  if (!normalizedSlug) {
+    throw new Error('buildInternalDocPath: "slug" must be a non-empty string.')
+  }
+
+  return relationTo === 'posts' ? `/posts/${normalizedSlug}` : `/${normalizedSlug}`
 }
 
 export const isExternalHref = (href: string) => {

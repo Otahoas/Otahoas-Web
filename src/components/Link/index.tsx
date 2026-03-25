@@ -49,7 +49,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
         })
       : url
         ? localizeInternalHref({ href: url, locale })
-        : url
+        : undefined
 
   if (!href) return null
 
