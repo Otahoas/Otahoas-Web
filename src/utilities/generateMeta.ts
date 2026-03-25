@@ -45,7 +45,11 @@ export const generateMeta = async (args: {
           ]
         : undefined,
       title,
-      url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
+      url: doc?.slug
+        ? doc.slug === 'home'
+          ? `/${locale}`
+          : `/${locale}/${doc.slug}`
+        : `/${locale}`,
     }),
     title,
   }
