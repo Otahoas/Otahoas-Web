@@ -1,20 +1,18 @@
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
+'use client'
+
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
   SerializedLinkNode,
-  type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
   JSXConvertersFunction,
   LinkJSXConverter,
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
-import { getLocale } from 'next-intl/server'
 
 import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
 import { locales, type Locale } from '@/i18n/config'
-
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
@@ -23,7 +21,9 @@ import type {
 import { buildLocalizedInternalDocHref } from '@/utilities/localizedHref'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { cn } from '@/utilities/ui'
+import { type DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 type NodeTypes =
   | DefaultNodeTypes
@@ -36,13 +36,10 @@ const createInternalDocToHref =
     if (typeof value !== 'object') {
       throw new Error('Expected value to be an object')
     }
-
     const normalizedRelationTo = relationTo === 'posts' ? 'posts' : 'pages'
-
     if (typeof value.slug !== 'string') {
       return locale ? `/${locale}` : '/'
     }
-
     return buildLocalizedInternalDocHref({
       relationTo: normalizedRelationTo,
       slug: value.slug,
@@ -79,27 +76,8 @@ type Props = {
   locale?: Locale
 } & React.HTMLAttributes<HTMLDivElement>
 
-export default async function RichText(props: Props) {
-  const {
-    className,
-    enableProse = true,
-    enableGutter = true,
-    locale: localeFromProps,
-    ...rest
-  } = props
-
-  let locale = localeFromProps
-
-  if (!locale) {
-    try {
-      const requestLocale = await getLocale()
-      if (locales.includes(requestLocale as Locale)) {
-        locale = requestLocale as Locale
-      }
-    } catch {
-      locale = undefined
-    }
-  }
+export default function RichTextClient(props: Props) {
+  const { className, enableProse = true, enableGutter = true, locale, ...rest } = props
 
   return (
     <ConvertRichText

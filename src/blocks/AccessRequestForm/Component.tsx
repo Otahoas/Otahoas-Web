@@ -2,7 +2,10 @@
 
 import React, { useEffect, useState } from 'react'
 import type { AccessRequestFormBlock as AccessRequestFormBlockProps } from '@/payload-types'
-import RichText from '@/components/RichText'
+import RichTextClient from '@/components/RichText/Client'
+import { useLocale } from 'next-intl'
+import { type Locale } from '@/i18n/config'
+import { CMSLink } from '@/components/Link'
 import {
   Select,
   SelectContent,
@@ -215,15 +218,18 @@ const dateToISO = (dateValue: string): string => {
 
 export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (props) => {
   const {
-    language = 'fi',
     introContent,
-    rulesPageLink,
-    spacesInfoLink,
+    enableRulesLink,
+    rulesLink,
+    enableSpacesLink,
+    spacesLink,
+    enableCalendarLink,
     calendarLink,
     confirmationMessage,
   } = props
 
-  const t = translations[language as 'fi' | 'en'] || translations.fi
+  const locale = useLocale() as Locale
+  const t = translations[locale] || translations.fi
 
   const [targets, setTargets] = useState<ReservationTarget[]>([])
   const [loadingTargets, setLoadingTargets] = useState(true)
@@ -338,7 +344,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          language,
+          language: locale,
           startDate: dateToISO(formData.startDate),
           endDate: dateToISO(formData.endDate),
           participants: formData.participants ? parseInt(formData.participants, 10) : undefined,
@@ -376,7 +382,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
       console.error('Submit error:', error)
       setSubmitResult({
         success: false,
-        message: language === 'fi' ? 'Virhe lähetyksessä' : 'Submission error',
+        message: locale === 'fi' ? 'Virhe lähetyksessä' : 'Submission error',
       })
     } finally {
       setIsSubmitting(false)
@@ -408,36 +414,48 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
       {/* Intro Content */}
       {introContent && (
         <div className="mb-8">
-          <RichText data={introContent} enableGutter={false} />
+          <RichTextClient data={introContent} enableGutter={false} locale={locale} />
         </div>
       )}
 
       {/* Quick Links */}
-      {(rulesPageLink || spacesInfoLink || calendarLink) && (
+      {(enableRulesLink || enableSpacesLink || enableCalendarLink) && (
         <div className="mx-auto mb-8 flex max-w-2xl flex-wrap gap-4">
-          {rulesPageLink && (
-            <a
-              href={rulesPageLink}
+          {enableRulesLink && rulesLink && (
+            <CMSLink
+              type={rulesLink.type}
+              reference={rulesLink.reference}
+              url={rulesLink.url}
+              newTab={rulesLink.newTab}
+              locale={locale}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
-              {language === 'fi' ? 'Säännöt' : 'Rules'}
-            </a>
+              {locale === 'fi' ? 'Säännöt' : 'Rules'}
+            </CMSLink>
           )}
-          {spacesInfoLink && (
-            <a
-              href={spacesInfoLink}
+          {enableSpacesLink && spacesLink && (
+            <CMSLink
+              type={spacesLink.type}
+              reference={spacesLink.reference}
+              url={spacesLink.url}
+              newTab={spacesLink.newTab}
+              locale={locale}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
-              {language === 'fi' ? 'Tilat' : 'Spaces'}
-            </a>
+              {locale === 'fi' ? 'Tilat' : 'Spaces'}
+            </CMSLink>
           )}
-          {calendarLink && (
-            <a
-              href={calendarLink}
+          {enableCalendarLink && calendarLink && (
+            <CMSLink
+              type={calendarLink.type}
+              reference={calendarLink.reference}
+              url={calendarLink.url}
+              newTab={calendarLink.newTab}
+              locale={locale}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
-              {language === 'fi' ? 'Kalenteri' : 'Calendar'}
-            </a>
+              {locale === 'fi' ? 'Kalenteri' : 'Calendar'}
+            </CMSLink>
           )}
         </div>
       )}
@@ -453,7 +471,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
         >
           <h3 className="mb-2 font-bold">{submitResult.success ? t.successTitle : t.errorTitle}</h3>
           {submitResult.success && confirmationMessage ? (
-            <RichText data={confirmationMessage} enableGutter={false} />
+            <RichTextClient data={confirmationMessage} enableGutter={false} locale={locale} />
           ) : (
             <p>{submitResult.message}</p>
           )}
@@ -492,7 +510,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
                           key={target.id}
                           value={String(target.id)}
                         >
-                          {language === 'fi' ? target.labelFi : target.labelEn}
+                          {locale === 'fi' ? target.labelFi : target.labelEn}
                         </SelectItem>
                       ))}
                     </SelectGroup>

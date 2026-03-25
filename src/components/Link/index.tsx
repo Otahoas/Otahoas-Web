@@ -5,6 +5,7 @@ import React from 'react'
 
 import type { Page, Post } from '@/payload-types'
 import type { Locale } from '@/i18n/config'
+import { buildLocalizedInternalDocHref, localizeInternalHref } from '@/utilities/localizedHref'
 
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']
@@ -36,26 +37,19 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     url,
   } = props
 
-  let href =
-    type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-          reference.value.slug
-        }`
+  const href =
+    type === 'reference' &&
+    reference?.relationTo &&
+    typeof reference?.value === 'object' &&
+    reference.value.slug
+      ? buildLocalizedInternalDocHref({
+          relationTo: reference.relationTo,
+          slug: reference.value.slug,
+          locale,
+        })
       : url
-
-  // Prefix internal links with locale (except /admin which is not localized)
-  if (
-    href &&
-    locale &&
-    !href.startsWith('http') &&
-    !href.startsWith('mailto:') &&
-    !href.startsWith('tel:') &&
-    !href.startsWith('/admin')
-  ) {
-    // Ensure href starts with /
-    const cleanHref = href.startsWith('/') ? href : `/${href}`
-    href = `/${locale}${cleanHref}`
-  }
+        ? localizeInternalHref({ href: url, locale })
+        : url
 
   if (!href) return null
 
