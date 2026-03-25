@@ -930,18 +930,51 @@ export interface AccessRequestFormBlock {
     };
     [k: string]: unknown;
   } | null;
-  /**
-   * Link to rules page (e.g., /saannot)
-   */
-  rulesPageLink?: string | null;
-  /**
-   * Link to spaces information page
-   */
-  spacesInfoLink?: string | null;
-  /**
-   * Link to calendar page (e.g., /kalenteri)
-   */
-  calendarLink?: string | null;
+  enableRulesLink?: boolean | null;
+  rulesLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+  };
+  enableSpacesLink?: boolean | null;
+  spacesLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+  };
+  enableCalendarLink?: boolean | null;
+  calendarLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+  };
   /**
    * Message shown after successful submission
    */
@@ -1648,9 +1681,33 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface AccessRequestFormBlockSelect<T extends boolean = true> {
   introContent?: T;
-  rulesPageLink?: T;
-  spacesInfoLink?: T;
-  calendarLink?: T;
+  enableRulesLink?: T;
+  rulesLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+      };
+  enableSpacesLink?: T;
+  spacesLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+      };
+  enableCalendarLink?: T;
+  calendarLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+      };
   confirmationMessage?: T;
   id?: T;
   blockName?: T;

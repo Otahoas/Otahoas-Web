@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react'
 import type { AccessRequestFormBlock as AccessRequestFormBlockProps } from '@/payload-types'
-import RichText from '@/components/RichText'
+import RichTextClient from '@/components/RichText/Client'
 import { useLocale } from 'next-intl'
-import { localizeInternalHref } from '@/utilities/localizedHref'
 import { type Locale } from '@/i18n/config'
+import { CMSLink } from '@/components/Link'
 import {
   Select,
   SelectContent,
@@ -217,7 +217,16 @@ const dateToISO = (dateValue: string): string => {
 }
 
 export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (props) => {
-  const { introContent, rulesPageLink, spacesInfoLink, calendarLink, confirmationMessage } = props
+  const {
+    introContent,
+    enableRulesLink,
+    rulesLink,
+    enableSpacesLink,
+    spacesLink,
+    enableCalendarLink,
+    calendarLink,
+    confirmationMessage,
+  } = props
 
   const locale = useLocale() as Locale
   const t = translations[locale] || translations.fi
@@ -405,36 +414,48 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
       {/* Intro Content */}
       {introContent && (
         <div className="mb-8">
-          <RichText data={introContent} enableGutter={false} />
+          <RichTextClient data={introContent} enableGutter={false} locale={locale} />
         </div>
       )}
 
       {/* Quick Links */}
-      {(rulesPageLink || spacesInfoLink || calendarLink) && (
+      {(enableRulesLink || enableSpacesLink || enableCalendarLink) && (
         <div className="mx-auto mb-8 flex max-w-2xl flex-wrap gap-4">
-          {rulesPageLink && (
-            <a
-              href={localizeInternalHref({ href: rulesPageLink, locale })}
+          {enableRulesLink && rulesLink && (
+            <CMSLink
+              type={rulesLink.type}
+              reference={rulesLink.reference}
+              url={rulesLink.url}
+              newTab={rulesLink.newTab}
+              locale={locale}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {locale === 'fi' ? 'Säännöt' : 'Rules'}
-            </a>
+            </CMSLink>
           )}
-          {spacesInfoLink && (
-            <a
-              href={localizeInternalHref({ href: spacesInfoLink, locale })}
+          {enableSpacesLink && spacesLink && (
+            <CMSLink
+              type={spacesLink.type}
+              reference={spacesLink.reference}
+              url={spacesLink.url}
+              newTab={spacesLink.newTab}
+              locale={locale}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {locale === 'fi' ? 'Tilat' : 'Spaces'}
-            </a>
+            </CMSLink>
           )}
-          {calendarLink && (
-            <a
-              href={localizeInternalHref({ href: calendarLink, locale })}
+          {enableCalendarLink && calendarLink && (
+            <CMSLink
+              type={calendarLink.type}
+              reference={calendarLink.reference}
+              url={calendarLink.url}
+              newTab={calendarLink.newTab}
+              locale={locale}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {locale === 'fi' ? 'Kalenteri' : 'Calendar'}
-            </a>
+            </CMSLink>
           )}
         </div>
       )}
@@ -450,7 +471,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
         >
           <h3 className="mb-2 font-bold">{submitResult.success ? t.successTitle : t.errorTitle}</h3>
           {submitResult.success && confirmationMessage ? (
-            <RichText data={confirmationMessage} enableGutter={false} />
+            <RichTextClient data={confirmationMessage} enableGutter={false} locale={locale} />
           ) : (
             <p>{submitResult.message}</p>
           )}

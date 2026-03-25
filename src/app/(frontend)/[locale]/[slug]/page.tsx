@@ -82,6 +82,7 @@ const queryPageBySlug = cache(async ({ slug, locale }: { slug: string; locale: L
 
   const result = await payload.find({
     collection: 'pages',
+    depth: 2,
     draft,
     locale,
     limit: 1,
