@@ -58,7 +58,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       {draft && <LivePreviewListener />}
 
       <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      <RenderBlocks blocks={layout} locale={locale as Locale} />
     </article>
   )
 }
@@ -82,6 +82,7 @@ const queryPageBySlug = cache(async ({ slug, locale }: { slug: string; locale: L
 
   const result = await payload.find({
     collection: 'pages',
+    depth: 2,
     draft,
     locale,
     limit: 1,

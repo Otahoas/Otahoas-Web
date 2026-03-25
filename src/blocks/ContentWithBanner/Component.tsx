@@ -5,6 +5,7 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { cn } from '@/utilities/ui'
 import type { Media as MediaType, Page, Post } from '@/payload-types'
+import type { Locale } from '@/i18n/config'
 
 type ContentWithBannerItem = {
   title?: string | null
@@ -25,6 +26,7 @@ type ContentWithBannerItem = {
 type ContentWithBannerBlockProps = {
   widthRatio?: 'balanced' | 'contentWide' | 'bannerWide' | null
   items?: ContentWithBannerItem[] | null
+  locale?: Locale
 }
 
 const ratioToClasses: Record<
@@ -48,6 +50,7 @@ const ratioToClasses: Record<
 export const ContentWithBannerBlock: React.FC<ContentWithBannerBlockProps> = ({
   widthRatio = 'balanced',
   items,
+  locale,
 }) => {
   if (!items?.length) return null
   const resolvedRatio = widthRatio ?? 'balanced'
@@ -103,6 +106,7 @@ export const ContentWithBannerBlock: React.FC<ContentWithBannerBlockProps> = ({
                 reference={item.link.reference}
                 url={item.link.url}
                 newTab={item.link.newTab}
+                locale={locale}
                 className="block"
               >
                 {sectionContent}

@@ -6,6 +6,7 @@ import React, { Fragment } from 'react'
 
 import type { Post } from '@/payload-types'
 import type { Locale } from '@/i18n/config'
+import { buildLocalizedInternalDocHref } from '@/utilities/localizedHref'
 
 import { Media } from '@/components/Media'
 
@@ -29,7 +30,11 @@ export const Card: React.FC<{
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
-  const href = locale ? `/${locale}/${relationTo}/${slug}` : `/${relationTo}/${slug}`
+  const href = buildLocalizedInternalDocHref({
+    relationTo: relationTo || 'posts',
+    slug: slug || '',
+    locale,
+  })
 
   return (
     <article
