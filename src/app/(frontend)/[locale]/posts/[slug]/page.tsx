@@ -14,8 +14,9 @@ import type { Post } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { type Locale } from '@/i18n/config'
+import { locales, type Locale } from '@/i18n/config'
 import { setRequestLocale } from 'next-intl/server'
+import { SetAlternateLinks } from '@/providers/AlternateLinks'
 type Args = {
   params: Promise<{
     locale: string
@@ -37,9 +38,12 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
+  const alternateLinks = await getAlternateSlugs({ id: post.id, currentLocale: locale as Locale })
+
   return (
     <article className="pb-16 pt-16">
       <PageClient />
+      <SetAlternateLinks links={alternateLinks} />
 
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
@@ -92,6 +96,27 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   return generateMeta({ doc: post, locale: locale as Locale })
 }
+
+const getAlternateSlugs = cache(
+  async ({ id, currentLocale }: { id: string | number; currentLocale: Locale }) => {
+    const payload = await getPayload({ config: configPromise })
+    const result: Partial<Record<Locale, string>> = {}
+
+    for (const locale of locales) {
+      if (locale === currentLocale) continue
+      const doc = await payload.findByID({
+        collection: 'posts',
+        id,
+        locale,
+        select: { slug: true },
+      })
+      const slug = doc.slug as string
+      result[locale] = `/${locale}/posts/${slug}`
+    }
+
+    return result
+  },
+)
 
 const queryPostBySlug = cache(async ({ slug, locale }: { slug: string; locale: Locale }) => {
   const { isEnabled: draft } = await draftMode()
