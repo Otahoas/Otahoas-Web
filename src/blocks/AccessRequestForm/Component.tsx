@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import type { AccessRequestFormBlock as AccessRequestFormBlockProps } from '@/payload-types'
 import RichText from '@/components/RichText'
+import { type Locale } from '@/i18n/config'
+import { localizeInternalHref } from '@/utilities/localizedHref'
 import {
   Select,
   SelectContent,
@@ -224,6 +226,18 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
   } = props
 
   const t = translations[language as 'fi' | 'en'] || translations.fi
+  //We set the locale for the links based on the language of the form, not the language of the page to keep consistency
+  const locale: Locale = language === 'en' ? 'en' : 'fi'
+
+  const rulesPageHref = rulesPageLink
+    ? localizeInternalHref({ href: rulesPageLink, locale })
+    : undefined
+  const spacesInfoHref = spacesInfoLink
+    ? localizeInternalHref({ href: spacesInfoLink, locale })
+    : undefined
+  const calendarHref = calendarLink
+    ? localizeInternalHref({ href: calendarLink, locale })
+    : undefined
 
   const [targets, setTargets] = useState<ReservationTarget[]>([])
   const [loadingTargets, setLoadingTargets] = useState(true)
@@ -413,27 +427,27 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
       )}
 
       {/* Quick Links */}
-      {(rulesPageLink || spacesInfoLink || calendarLink) && (
+      {(rulesPageHref || spacesInfoHref || calendarHref) && (
         <div className="mx-auto mb-8 flex max-w-2xl flex-wrap gap-4">
-          {rulesPageLink && (
+          {rulesPageHref && (
             <a
-              href={rulesPageLink}
+              href={rulesPageHref}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {language === 'fi' ? 'Säännöt' : 'Rules'}
             </a>
           )}
-          {spacesInfoLink && (
+          {spacesInfoHref && (
             <a
-              href={spacesInfoLink}
+              href={spacesInfoHref}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {language === 'fi' ? 'Tilat' : 'Spaces'}
             </a>
           )}
-          {calendarLink && (
+          {calendarHref && (
             <a
-              href={calendarLink}
+              href={calendarHref}
               className="inline-flex items-center rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/20"
             >
               {language === 'fi' ? 'Kalenteri' : 'Calendar'}
