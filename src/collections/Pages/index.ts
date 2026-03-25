@@ -140,7 +140,7 @@ export const Pages: CollectionConfig<'pages'> = {
         position: 'sidebar',
       },
     },
-    slugField(),
+    slugField({ localized: true }),
   ],
   hooks: {
     afterChange: [revalidatePage],

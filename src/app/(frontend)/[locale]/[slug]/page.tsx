@@ -12,8 +12,9 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { type Locale } from '@/i18n/config'
+import { locales, type Locale } from '@/i18n/config'
 import { setRequestLocale } from 'next-intl/server'
+import { SetAlternateLinks } from '@/providers/AlternateLinks'
 
 type Args = {
   params: Promise<{
@@ -49,9 +50,12 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const { hero, layout } = page
 
+  const alternateLinks = await getAlternateSlugs({ id: page.id, currentLocale: locale as Locale })
+
   return (
     <article className="pb-24 pt-16">
       <PageClient />
+      <SetAlternateLinks links={alternateLinks} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -74,6 +78,28 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   return generateMeta({ doc: page, locale: locale as Locale })
 }
+
+const getAlternateSlugs = cache(
+  async ({ id, currentLocale }: { id: string | number | undefined; currentLocale: Locale }) => {
+    if (!id) return {}
+    const payload = await getPayload({ config: configPromise })
+    const result: Partial<Record<Locale, string>> = {}
+
+    for (const locale of locales) {
+      if (locale === currentLocale) continue
+      const doc = await payload.findByID({
+        collection: 'pages',
+        id,
+        locale,
+        select: { slug: true },
+      })
+      const slug = doc.slug as string
+      result[locale] = slug === 'home' ? `/${locale}` : `/${locale}/${slug}`
+    }
+
+    return result
+  },
+)
 
 const queryPageBySlug = cache(async ({ slug, locale }: { slug: string; locale: Locale }) => {
   const { isEnabled: draft } = await draftMode()
