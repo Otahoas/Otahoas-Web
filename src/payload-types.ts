@@ -624,9 +624,13 @@ export interface CommitteeBlock {
      */
     telegram?: string | null;
     /**
-     * Profile photo (optional)
+     * Profile photo for light mode (optional)
      */
     image?: (number | null) | Media;
+    /**
+     * Profile photo for dark mode (optional, falls back to light mode image)
+     */
+    imageDark?: (number | null) | Media;
     id?: string | null;
   }[];
   id?: string | null;
@@ -1611,6 +1615,7 @@ export interface CommitteeBlockSelect<T extends boolean = true> {
         title?: T;
         telegram?: T;
         image?: T;
+        imageDark?: T;
         id?: T;
       };
   id?: T;

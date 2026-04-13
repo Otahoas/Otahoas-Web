@@ -65,7 +65,15 @@ export const Committee: Block = {
           type: 'upload',
           relationTo: 'media',
           admin: {
-            description: 'Profile photo (optional)',
+            description: 'Profile photo for light mode (optional)',
+          },
+        },
+        {
+          name: 'imageDark',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description: 'Profile photo for dark mode (optional, falls back to light mode image)',
           },
         },
       ],
