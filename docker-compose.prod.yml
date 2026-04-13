@@ -24,6 +24,7 @@ services:
       NODE_ENV: production
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       DATABASE_URL: ${DATABASE_URL}
+      INTERNAL_SERVER_URL: 'http://app:3000'
     volumes:
       - media_data:/app/public/media
     depends_on:
