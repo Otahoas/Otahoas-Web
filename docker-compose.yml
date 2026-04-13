@@ -1,7 +1,9 @@
 services:
   # Development service - uses volume mounts for hot reload
   dev:
-    image: node:24-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     ports:
       - '3000:3000'
     volumes:
@@ -11,12 +13,11 @@ services:
     working_dir: /home/node/app/
     stdin_open: true
     tty: true
-    command: sh -c "corepack enable pnpm && pnpm install && yes | pnpm dev"
+    command: sh -c "pnpm install && yes | pnpm dev"
     depends_on:
       - postgres
     env_file:
       - .env
-    user: '1000:1000'
     environment:
       - COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 

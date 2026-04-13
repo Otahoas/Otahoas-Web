@@ -1,0 +1,6 @@
+FROM node:24-alpine
+RUN corepack enable && corepack prepare pnpm@10.28.1 --activate
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+USER node
+RUN echo "store-dir=/home/node/.pnpm-store" >> /home/node/.npmrc
+WORKDIR /home/node/app

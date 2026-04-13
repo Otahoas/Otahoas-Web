@@ -35,27 +35,23 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  useEffect(() => {
-    setStartIndex((prev) => {
-      const maxStart = Math.max(0, posts.length - visibleCount)
-      return Math.min(prev, maxStart)
-    })
-  }, [visibleCount, posts.length])
+  const maxStart = Math.max(0, posts.length - visibleCount)
+  const clampedStart = Math.min(startIndex, maxStart)
 
   const visiblePosts = useMemo(
-    () => posts.slice(startIndex, startIndex + visibleCount),
-    [posts, startIndex, visibleCount],
+    () => posts.slice(clampedStart, clampedStart + visibleCount),
+    [posts, clampedStart, visibleCount],
   )
 
-  const canShowOlder = startIndex + visibleCount < posts.length
-  const canShowNewer = startIndex > 0
+  const canShowOlder = clampedStart + visibleCount < posts.length
+  const canShowNewer = clampedStart > 0
 
   const goOlder = () => {
-    setStartIndex((prev) => Math.min(prev + visibleCount, Math.max(0, posts.length - visibleCount)))
+    setStartIndex(Math.min(clampedStart + visibleCount, maxStart))
   }
 
   const goNewer = () => {
-    setStartIndex((prev) => Math.max(prev - visibleCount, 0))
+    setStartIndex(Math.max(clampedStart - visibleCount, 0))
   }
 
   const gridColsClass =

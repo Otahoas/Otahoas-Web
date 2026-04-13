@@ -22,6 +22,8 @@ export const Card: React.FC<{
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
+  const cardRef = card.ref
+  const linkRef = link.ref
   const { className, doc, locale, relationTo, showCategories, title: titleFromProps } = props
 
   const { slug, categories, meta, title } = doc || {}
@@ -42,7 +44,7 @@ export const Card: React.FC<{
         'overflow-hidden rounded-lg border border-border bg-card hover:cursor-pointer',
         className,
       )}
-      ref={card.ref}
+      ref={cardRef}
     >
       <div className="relative w-full">
         {!metaImage && <div className="">No image</div>}
@@ -78,7 +80,7 @@ export const Card: React.FC<{
         {titleToUse && (
           <div className="prose">
             <h3>
-              <Link className="not-prose" href={href} ref={link.ref}>
+              <Link className="not-prose" href={href} ref={linkRef}>
                 {titleToUse}
               </Link>
             </h3>

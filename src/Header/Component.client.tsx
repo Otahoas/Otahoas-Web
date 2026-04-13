@@ -18,24 +18,22 @@ interface HeaderClientProps {
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
-  const [theme, setTheme] = useState<string | null>(null)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [menuOpenPath, setMenuOpenPath] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
+  const mobileMenuOpen = menuOpenPath === pathname
 
   useEffect(() => {
     setHeaderTheme(null)
-    setMobileMenuOpen(false)
-  }, [pathname])
-
-  useEffect(() => {
-    if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
-  }, [headerTheme, theme])
+  }, [pathname, setHeaderTheme])
 
   const siteTitle = data.siteTitle || 'OtaHoas'
 
   return (
-    <header className="container relative z-20" {...(theme ? { 'data-theme': theme } : {})}>
+    <header
+      className="container relative z-20"
+      {...(headerTheme ? { 'data-theme': headerTheme } : {})}
+    >
       <div className="flex items-center justify-between py-4 md:py-8">
         <Link href={`/${locale}`} className="flex items-center gap-3">
           <Logo />
@@ -51,7 +49,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
         {/* Mobile menu button */}
         <button
           className="p-2 md:hidden"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={() => setMenuOpenPath(mobileMenuOpen ? null : pathname)}
           aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

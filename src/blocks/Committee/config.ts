@@ -48,6 +48,7 @@ export const Committee: Block = {
         {
           name: 'title',
           type: 'text',
+          localized: true,
           admin: {
             description: 'Optional title/role (e.g., "Puheenjohtaja", "ASY")',
           },
