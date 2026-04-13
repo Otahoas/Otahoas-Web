@@ -9,6 +9,7 @@ import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
+import { ThemeFavicon } from '@/components/ThemeFavicon'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -46,11 +47,12 @@ export default async function LocaleLayout({ children, params }: Props) {
     >
       <head>
         <InitTheme />
-        <link href="/otahoas.png" rel="icon" type="image/png" />
+        <link id="favicon" href="/otahoas_light.png" rel="icon" type="image/png" />
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
           <Providers>
+            <ThemeFavicon />
             <AdminBar
               adminBarProps={{
                 preview: isEnabled,

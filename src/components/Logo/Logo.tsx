@@ -15,15 +15,27 @@ export const Logo = (props: Props) => {
 
   return (
     /* eslint-disable @next/next/no-img-element */
-    <img
-      alt="OtaHoas"
-      width={48}
-      height={48}
-      loading={loading}
-      fetchPriority={priority}
-      decoding="async"
-      className={clsx('h-12 w-12 object-contain', className)}
-      src="/otahoas.png"
-    />
+    <>
+      <img
+        alt="OtaHoas"
+        width={48}
+        height={48}
+        loading={loading}
+        fetchPriority={priority}
+        decoding="async"
+        className={clsx('h-12 w-12 object-contain dark:hidden', className)}
+        src="/otahoas_light.png"
+      />
+      <img
+        alt="OtaHoas"
+        width={48}
+        height={48}
+        loading={loading}
+        fetchPriority={priority}
+        decoding="async"
+        className={clsx('hidden h-12 w-12 object-contain dark:block', className)}
+        src="/otahoas_dark.png"
+      />
+    </>
   )
 }

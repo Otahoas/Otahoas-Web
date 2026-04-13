@@ -6,7 +6,7 @@ const getDefaultOpenGraph = (description?: string) => ({
   description: description || 'OtaHoas',
   images: [
     {
-      url: `${getServerSideURL()}/otahoas.png`,
+      url: `${getServerSideURL()}/otahoas_light.png`,
     },
   ],
   siteName: 'OtaHoas',
