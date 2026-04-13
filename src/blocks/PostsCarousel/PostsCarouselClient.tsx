@@ -57,6 +57,15 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
   const gridColsClass =
     visibleCount === 1 ? 'grid-cols-1' : visibleCount === 2 ? 'grid-cols-2' : 'grid-cols-3'
 
+  const getObjectPosition = (image: MediaType | null | undefined) => {
+    if (!image || typeof image !== 'object') return undefined
+
+    const focalX = typeof image.focalX === 'number' ? image.focalX : 50
+    const focalY = typeof image.focalY === 'number' ? image.focalY : 50
+
+    return { objectPosition: `${focalX}% ${focalY}%` }
+  }
+
   return (
     <div className="container my-16">
       <div className="rounded-lg bg-[rgb(249,109,82)] p-6 dark:bg-[rgb(84,7,5)]">
@@ -89,6 +98,9 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
           {visiblePosts.map((post) => {
             const image = post.heroImage ?? post.meta?.image
             const href = `/${locale}/posts/${post.slug}`
+            const imageStyle = getObjectPosition(
+              image && typeof image === 'object' ? (image as MediaType) : null,
+            )
 
             return (
               <article
@@ -102,6 +114,7 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
                         resource={image as MediaType}
                         className="h-full w-full"
                         imgClassName="h-full w-full object-cover"
+                        style={imageStyle}
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
