@@ -81,7 +81,13 @@ export const Posts: CollectionConfig<'posts'> = {
               name: 'heroImage',
               type: 'upload',
               relationTo: 'media',
-              label: 'Banner image',
+              label: 'Banner image (light mode)',
+            },
+            {
+              name: 'heroImageDark',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Banner image (dark mode)',
             },
             {
               name: 'abstract',

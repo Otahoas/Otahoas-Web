@@ -8,7 +8,10 @@ import { Media } from '@/components/Media'
 import type { Media as MediaType, Post } from '@/payload-types'
 import { formatDateTime } from '@/utilities/formatDateTime'
 
-type PostItem = Pick<Post, 'id' | 'slug' | 'title' | 'heroImage' | 'meta' | 'publishedAt'>
+type PostItem = Pick<
+  Post,
+  'id' | 'slug' | 'title' | 'heroImage' | 'heroImageDark' | 'meta' | 'publishedAt'
+>
 
 type PostsCarouselClientProps = {
   posts: PostItem[]
@@ -66,6 +69,10 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
     return { objectPosition: `${focalX}% ${focalY}%` }
   }
 
+  const isMediaImage = (image: unknown): image is MediaType => {
+    return Boolean(image && typeof image === 'object')
+  }
+
   return (
     <div className="container my-16">
       <div className="rounded-lg bg-[rgb(249,109,82)] p-6 dark:bg-[rgb(84,7,5)]">
@@ -96,11 +103,21 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
 
         <div className={`grid gap-6 ${gridColsClass}`}>
           {visiblePosts.map((post) => {
-            const image = post.heroImage ?? post.meta?.image
+            const lightImage = post.heroImage ?? post.meta?.image
+            const darkImage = post.heroImageDark
             const href = `/${locale}/posts/${post.slug}`
-            const imageStyle = getObjectPosition(
-              image && typeof image === 'object' ? (image as MediaType) : null,
-            )
+            const hasBoth = isMediaImage(lightImage) && isMediaImage(darkImage)
+            const fallbackImage = isMediaImage(lightImage)
+              ? lightImage
+              : isMediaImage(darkImage)
+                ? darkImage
+                : null
+            const lightImageStyle = isMediaImage(lightImage)
+              ? getObjectPosition(lightImage)
+              : undefined
+            const darkImageStyle = isMediaImage(darkImage)
+              ? getObjectPosition(darkImage)
+              : undefined
 
             return (
               <article
@@ -109,12 +126,27 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
               >
                 <Link href={href} className="block">
                   <div className="aspect-video w-full overflow-hidden">
-                    {image && typeof image === 'object' ? (
+                    {hasBoth ? (
+                      <>
+                        <Media
+                          resource={lightImage}
+                          className="h-full w-full dark:hidden"
+                          imgClassName="h-full w-full object-cover"
+                          style={lightImageStyle}
+                        />
+                        <Media
+                          resource={darkImage}
+                          className="hidden h-full w-full dark:block"
+                          imgClassName="h-full w-full object-cover"
+                          style={darkImageStyle}
+                        />
+                      </>
+                    ) : fallbackImage ? (
                       <Media
-                        resource={image as MediaType}
+                        resource={fallbackImage}
                         className="h-full w-full"
                         imgClassName="h-full w-full object-cover"
-                        style={imageStyle}
+                        style={getObjectPosition(fallbackImage)}
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
