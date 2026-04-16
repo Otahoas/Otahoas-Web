@@ -245,6 +245,7 @@ export interface Post {
   id: number;
   title: string;
   heroImage?: (number | null) | Media;
+  heroImageDark?: (number | null) | Media;
   abstract?: string | null;
   content?: {
     root: {
@@ -1781,6 +1782,7 @@ export interface PostsCarouselBlockSelect<T extends boolean = true> {
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   heroImage?: T;
+  heroImageDark?: T;
   abstract?: T;
   content?: T;
   relatedPosts?: T;

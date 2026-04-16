@@ -38,6 +38,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     resource,
     size: sizeFromProps,
     src: srcFromProps,
+    style,
     loading: loadingFromProps,
   } = props
 
@@ -81,6 +82,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         loading={loading}
         sizes={sizes}
         src={src}
+        style={style}
         width={!fill ? width : undefined}
       />
     </picture>

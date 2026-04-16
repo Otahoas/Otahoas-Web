@@ -39,6 +39,12 @@ export default async function Post({ params: paramsPromise }: Args) {
   if (!post) return <PayloadRedirects url={url} />
 
   const alternateLinks = await getAlternateSlugs({ id: post.id, currentLocale: locale as Locale })
+  const lightHeroImage =
+    post.heroImage && typeof post.heroImage !== 'string' ? post.heroImage : undefined
+  const darkHeroImage =
+    post.heroImageDark && typeof post.heroImageDark !== 'string' ? post.heroImageDark : undefined
+  const hasBothHeroImages = Boolean(lightHeroImage && darkHeroImage)
+  const heroImageToRender = lightHeroImage ?? darkHeroImage
 
   return (
     <article className="pb-16 pt-16">
@@ -58,14 +64,31 @@ export default async function Post({ params: paramsPromise }: Args) {
             <p className="text-lg leading-relaxed text-muted-foreground">{abstractText}</p>
           )}
 
-          {post.heroImage && typeof post.heroImage !== 'string' && (
+          {heroImageToRender && (
             <div className="w-full overflow-hidden rounded-lg">
-              <Media
-                resource={post.heroImage}
-                className="h-full w-full"
-                imgClassName="h-full w-full object-contain"
-                priority
-              />
+              {hasBothHeroImages ? (
+                <>
+                  <Media
+                    resource={lightHeroImage}
+                    className="h-full w-full dark:hidden"
+                    imgClassName="h-full w-full object-contain"
+                    priority
+                  />
+                  <Media
+                    resource={darkHeroImage}
+                    className="hidden h-full w-full dark:block"
+                    imgClassName="h-full w-full object-contain"
+                    priority
+                  />
+                </>
+              ) : (
+                <Media
+                  resource={heroImageToRender}
+                  className="h-full w-full"
+                  imgClassName="h-full w-full object-contain"
+                  priority
+                />
+              )}
             </div>
           )}
 
