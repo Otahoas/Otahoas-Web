@@ -4,8 +4,11 @@ import React from 'react'
 
 import { PostsCarouselClient } from '@/blocks/PostsCarousel/PostsCarouselClient'
 import type { Post, PostsCarouselBlock as PostsCarouselBlockProps } from '@/payload-types'
+import type { Locale } from '@/i18n/config'
 
-export const PostsCarouselBlock: React.FC<PostsCarouselBlockProps> = async (props) => {
+export const PostsCarouselBlock: React.FC<PostsCarouselBlockProps & { locale?: Locale }> = async (
+  props,
+) => {
   const payload = await getPayload({ config: configPromise })
   const limit = props.limit ?? 9
 
@@ -13,6 +16,7 @@ export const PostsCarouselBlock: React.FC<PostsCarouselBlockProps> = async (prop
     collection: 'posts',
     depth: 1,
     limit,
+    locale: props.locale,
     sort: '-publishedAt',
     where: {
       _status: {
