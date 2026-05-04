@@ -31,26 +31,17 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image, locale)
 
-  const title = doc?.title ? doc?.title + ' | OtaHoas' : 'OtaHoas'
+  const pageTitle = doc?.slug === 'home' ? null : doc?.title
+  const slug = doc?.slug && doc.slug !== 'home' ? `/${doc.slug}` : ''
 
   return {
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || '',
-      images: ogImage
-        ? [
-            {
-              url: ogImage,
-            },
-          ]
-        : undefined,
-      title,
-      url: doc?.slug
-        ? doc.slug === 'home'
-          ? `/${locale}`
-          : `/${locale}/${doc.slug}`
-        : `/${locale}`,
+      images: ogImage ? [{ url: ogImage }] : undefined,
+      title: pageTitle ? `${pageTitle} | OtaHoas` : 'OtaHoas',
+      url: `/${locale}${slug}`,
     }),
-    title,
+    title: pageTitle ?? { absolute: 'OtaHoas' },
   }
 }
