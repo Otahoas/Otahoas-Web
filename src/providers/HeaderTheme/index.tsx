@@ -2,9 +2,7 @@
 
 import type { Theme } from '@/providers/Theme/types'
 
-import React, { createContext, useCallback, use, useState } from 'react'
-
-import canUseDOM from '@/utilities/canUseDOM'
+import React, { createContext, useCallback, useEffect, use, useState } from 'react'
 
 export interface ContextType {
   headerTheme?: Theme | null
@@ -19,9 +17,13 @@ const initialContext: ContextType = {
 const HeaderThemeContext = createContext(initialContext)
 
 export const HeaderThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [headerTheme, setThemeState] = useState<Theme | undefined | null>(
-    canUseDOM ? (document.documentElement.getAttribute('data-theme') as Theme) : undefined,
-  )
+  const [headerTheme, setThemeState] = useState<Theme | undefined | null>(undefined)
+
+  useEffect(() => {
+    // Read DOM only after hydration to avoid SSR/CSR mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setThemeState(document.documentElement.getAttribute('data-theme') as Theme)
+  }, [])
 
   const setHeaderTheme = useCallback((themeToSet: Theme | null) => {
     setThemeState(themeToSet)
