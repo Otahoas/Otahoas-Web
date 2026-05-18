@@ -48,6 +48,7 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
 
   const canShowOlder = clampedStart + visibleCount < posts.length
   const canShowNewer = clampedStart > 0
+  const showPagination = posts.length > visibleCount
 
   const goOlder = () => {
     setStartIndex(Math.min(clampedStart + visibleCount, maxStart))
@@ -76,29 +77,31 @@ export const PostsCarouselClient: React.FC<PostsCarouselClientProps> = ({ posts,
   return (
     <div className="container my-16">
       <div className="rounded-lg bg-[rgb(249,109,82)] p-6 dark:bg-[rgb(84,7,5)]">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          {title ? <h2 className="text-4xl font-semibold">{title}</h2> : <div />}
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {title ? <h2 className="text-4xl font-semibold">{title}</h2> : null}
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={goNewer}
-              disabled={!canShowNewer}
-              className="rounded-md border border-border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="Show newer posts"
-            >
-              ← Newer
-            </button>
-            <button
-              type="button"
-              onClick={goOlder}
-              disabled={!canShowOlder}
-              className="rounded-md border border-border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="Show older posts"
-            >
-              Older →
-            </button>
-          </div>
+          {showPagination && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={goNewer}
+                disabled={!canShowNewer}
+                className="rounded-md border border-border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Show newer posts"
+              >
+                ← Newer
+              </button>
+              <button
+                type="button"
+                onClick={goOlder}
+                disabled={!canShowOlder}
+                className="rounded-md border border-border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Show older posts"
+              >
+                Older →
+              </button>
+            </div>
+          )}
         </div>
 
         <div className={`grid gap-6 ${gridColsClass}`}>
