@@ -1,6 +1,8 @@
 import type { PayloadHandler } from 'payload'
 import type { ReservationTarget } from '@/payload-types'
 import { sendTelegramMessage, isTelegramConfigured } from '@/utilities/telegram'
+import { sendMailIsolated } from '@/utilities/mailSender'
+
 
 interface AccessRequestBody {
   targetId: string
@@ -41,7 +43,7 @@ const _buildEmailContent = (
   const targetLabel = language === 'fi' ? target.labelFi : target.labelEn
 
   const subject =
-    language === 'fi' ? `Käyttöpyyntö: ${targetLabel}` : `Access Request: ${targetLabel}`
+    language === 'fi' ? `Käyttöpyyntö: ${targetLabel}` : `Resource Request: ${targetLabel}`
 
   const labels =
     language === 'fi'
@@ -70,7 +72,7 @@ const _buildEmailContent = (
           isPublicEventNo: 'Ei',
         }
       : {
-          title: 'Access Request',
+          title: 'Resource Request',
           target: 'Target',
           name: 'Name',
           email: 'Email',
@@ -162,7 +164,7 @@ const buildTelegramMessage = (data: AccessRequestBody, target: ReservationTarget
   }
 
   const lines = [
-    `<b>Access Request: ${escapeHtml(targetLabel)}</b>`,
+    `<b>Resource Request: ${escapeHtml(targetLabel)}</b>`,
     '',
     `<b>Name:</b> ${escapeHtml(data.name)}`,
     `<b>Email:</b> ${escapeHtml(data.email)}`,
@@ -294,7 +296,7 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
       },
     })
 
-    // Send message to Telegram
+    // Send message to Telegram, and try sending it via email if successful
     try {
       const sent = await sendTelegramMessage({
         text: telegramMessage,
@@ -304,6 +306,21 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
       if (!sent) {
         throw new Error('Failed to send Telegram message')
       }
+
+      // Try to send message to mailing list
+      try
+      {
+        if(target.emailPrefix)
+        {
+          const email = buildEmailContent(body, target, language);
+          const from = process.env.RESOURCE_REQUEST_MAIL_FROM || 'OtaHoas <otahoas@otahoas.fi>';
+          const target = `${target.emailPrefix.split('_').join(' ').toUpperCase()} <${target.emailPrefix}@otahoas.fi>`;
+          //Darkholing for isolation, pass payload.logger as the final argument if you wish to expose it
+          sendMailIsolated(from, target, email.subject, email.text, null);
+        }
+      }
+      catch(error){}
+
 
       // Update submission status
       await payload.update({
@@ -319,7 +336,7 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
         message:
           language === 'fi'
             ? 'Käyttöpyyntö lähetetty onnistuneesti'
-            : 'Access request sent successfully',
+            : 'Resource request sent successfully',
       })
     } catch (sendError) {
       const errorMessage = sendError instanceof Error ? sendError.message : 'Unknown error'
@@ -349,7 +366,7 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    payload.logger.error(`Access request error: ${errorMessage}`)
+    payload.logger.error(`Resource request error: ${errorMessage}`)
 
     return Response.json({ error: 'An error occurred processing your request' }, { status: 500 })
   }
