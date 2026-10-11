@@ -1,37 +1,13 @@
 import type { PayloadHandler } from 'payload'
 import type { ReservationTarget } from '@/payload-types'
-import { sendTelegramMessage, isTelegramConfigured } from '@/utilities/telegram'
-
-interface AccessRequestBody {
-  targetId: string
-  language: 'fi' | 'en'
-  name: string
-  email: string
-  phone?: string
-  telegram?: string
-  address?: string
-  association?: string
-  associationName?: string
-  startDate: string
-  endDate: string
-  startTime: string
-  endTime: string
-  participants?: number
-  useType?: string
-  details?: string
-  isPublicEvent?: string
-  publicEventName?: string
-  [key: string]: unknown
-}
-
-const formatDateFinnish = (dateStr: string): string => {
-  // Expects format YYYY-MM-DD or DD.MM.YYYY
-  if (dateStr.includes('-')) {
-    const [year, month, day] = dateStr.split('-')
-    return `${day}.${month}.${year}`
-  }
-  return dateStr
-}
+import { sendTelegramMessageWithResult, isTelegramConfigured } from '@/utilities/telegram'
+import {
+  buildDecisionKeyboard,
+  buildRequestMessage,
+  formatDateFinnish,
+  type AccessRequestBody,
+} from '@/utilities/reservationMessage'
+import { recordPendingReservation } from '@/utilities/reservationSheet'
 
 const _buildEmailContent = (
   data: AccessRequestBody,
@@ -153,56 +129,6 @@ const _buildEmailContent = (
   return { subject, html, text }
 }
 
-const buildTelegramMessage = (data: AccessRequestBody, target: ReservationTarget): string => {
-  const targetLabel = target.labelEn
-
-  const escapeHtml = (str: string | undefined): string => {
-    if (!str) return ''
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  }
-
-  const lines = [
-    `<b>Access Request: ${escapeHtml(targetLabel)}</b>`,
-    '',
-    `<b>Name:</b> ${escapeHtml(data.name)}`,
-    `<b>Email:</b> ${escapeHtml(data.email)}`,
-  ]
-
-  if (data.phone) lines.push(`<b>Phone:</b> ${escapeHtml(data.phone)}`)
-  if (data.telegram) lines.push(`<b>Telegram:</b> ${escapeHtml(data.telegram)}`)
-  if (data.address) lines.push(`<b>Address:</b> ${escapeHtml(data.address)}`)
-
-  if (data.association === 'yes') {
-    lines.push(`<b>Association:</b> Yes — ${escapeHtml(data.associationName)}`)
-  } else if (data.association === 'no') {
-    lines.push(`<b>Association:</b> No (individual booking)`)
-  }
-
-  lines.push('')
-  lines.push(`<b>Start Date:</b> ${formatDateFinnish(data.startDate)}`)
-  lines.push(`<b>End Date:</b> ${formatDateFinnish(data.endDate)}`)
-  lines.push(`<b>Start Time:</b> ${escapeHtml(data.startTime)}`)
-  lines.push(`<b>End Time:</b> ${escapeHtml(data.endTime)}`)
-
-  if (data.participants) lines.push(`<b>Participants:</b> ${data.participants}`)
-  if (data.useType) lines.push(`<b>Purpose:</b> ${escapeHtml(data.useType)}`)
-
-  if (data.details) {
-    lines.push('')
-    lines.push(`<b>Additional Details:</b>`)
-    lines.push(escapeHtml(data.details))
-  }
-
-  if (data.isPublicEvent === 'yes') {
-    lines.push('')
-    lines.push(`<b>Open Event:</b> Yes — ${escapeHtml(data.publicEventName)}`)
-  } else if (data.isPublicEvent === 'no') {
-    lines.push(`<b>Open Event:</b> No`)
-  }
-
-  return lines.join('\n')
-}
-
 export const accessRequestHandler: PayloadHandler = async (req) => {
   const { payload } = req
 
@@ -278,7 +204,7 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
     }
 
     // Build Telegram message
-    const telegramMessage = buildTelegramMessage(body, target)
+    const telegramMessage = buildRequestMessage(body, target)
 
     // Create submission record first
     const submission = await payload.create({
@@ -291,28 +217,57 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
         notificationSentTo: `Telegram topic ${target.telegramTopicId}`,
         sentAt: new Date().toISOString(),
         emailStatus: 'pending',
+        status: 'pending',
+        telegramTopicId: target.telegramTopicId,
+        sheetSyncStatus: 'not-written',
       },
     })
 
     // Send message to Telegram
     try {
-      const sent = await sendTelegramMessage({
+      const sent = await sendTelegramMessageWithResult({
         text: telegramMessage,
         topicId: target.telegramTopicId,
+        replyMarkup: buildDecisionKeyboard(submission.id),
       })
 
-      if (!sent) {
-        throw new Error('Failed to send Telegram message')
+      if (!sent.success) {
+        throw new Error(sent.error || 'Failed to send Telegram message')
       }
 
-      // Update submission status
+      // Store the message ID so the webhook can edit this message on a decision
       await payload.update({
         collection: 'access-request-submissions',
         id: submission.id,
         data: {
           emailStatus: 'sent',
+          telegramMessageId: sent.messageId ? String(sent.messageId) : undefined,
         },
       })
+
+      // The sheet is a mirror, so a failure here must not fail the request.
+      // A decision later appends the row if it turns out to be missing.
+      try {
+        const { rowNumber } = await recordPendingReservation({ submission, target })
+
+        await payload.update({
+          collection: 'access-request-submissions',
+          id: submission.id,
+          data: { sheetSyncStatus: 'written', sheetRowNumber: rowNumber },
+        })
+      } catch (error) {
+        const sheetError = error instanceof Error ? error.message : String(error)
+
+        payload.logger.error(
+          `Failed to write pending reservation ${submission.id} to the sheet: ${sheetError}`,
+        )
+
+        await payload.update({
+          collection: 'access-request-submissions',
+          id: submission.id,
+          data: { sheetSyncStatus: 'failed', sheetError },
+        })
+      }
 
       return Response.json({
         success: true,

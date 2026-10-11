@@ -1,5 +1,10 @@
 FROM node:24-alpine
-RUN corepack enable && corepack prepare pnpm@10.28.1 --activate
+# Installed globally rather than through corepack. Corepack stores the
+# activated version under the HOME of the user that ran it, so a version
+# prepared as root stayed invisible to the node user below and corepack
+# silently downloaded the latest pnpm instead, which then tried to reshape
+# the node_modules volume and failed on its ownership.
+RUN npm i -g pnpm@10.28.1
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 USER node
 RUN echo "store-dir=/home/node/.pnpm-store" >> /home/node/.npmrc

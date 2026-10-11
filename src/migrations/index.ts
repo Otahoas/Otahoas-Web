@@ -10,6 +10,9 @@ import * as migration_20260325_211449 from './20260325_211449'
 import * as migration_20260413_063211 from './20260413_063211'
 import * as migration_20260413_081856 from './20260413_081856'
 import * as migration_20260416_202708 from './20260416_202708'
+import * as migration_20261011_165535_add_reservation_status from './20261011_165535_add_reservation_status'
+import * as migration_20261011_191807_require_sheet_venue_key from './20261011_191807_require_sheet_venue_key'
+import * as migration_20261011_192057_require_target_config from './20261011_192057_require_target_config'
 
 export const migrations = [
   {
@@ -71,5 +74,20 @@ export const migrations = [
     up: migration_20260416_202708.up,
     down: migration_20260416_202708.down,
     name: '20260416_202708',
+  },
+  {
+    up: migration_20261011_165535_add_reservation_status.up,
+    down: migration_20261011_165535_add_reservation_status.down,
+    name: '20261011_165535_add_reservation_status',
+  },
+  {
+    up: migration_20261011_191807_require_sheet_venue_key.up,
+    down: migration_20261011_191807_require_sheet_venue_key.down,
+    name: '20261011_191807_require_sheet_venue_key',
+  },
+  {
+    up: migration_20261011_192057_require_target_config.up,
+    down: migration_20261011_192057_require_target_config.down,
+    name: '20261011_192057_require_target_config',
   },
 ]

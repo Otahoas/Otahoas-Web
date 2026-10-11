@@ -1,4 +1,6 @@
 import type { Payload, PayloadRequest } from 'payload'
+
+import { reservationTargetsData } from './reservation-targets'
 import path from 'path'
 import fs from 'fs'
 
@@ -63,21 +65,36 @@ export const seedReservationTargets = async (payload: Payload): Promise<void> =>
     seenPrefixes.add(emailPrefix)
 
     const category = getCategoryFromPrefix(emailPrefix)
+    const prefix = emailPrefix.trim()
+
+    // The topic, calendar and sheet key cannot be scraped off the old site, and
+    // a target without them can be shown but never booked: accepting one has
+    // nowhere to post, no calendar and no sheet row. Take them from the seed
+    // data and skip anything it does not know rather than create a target that
+    // looks fine in the admin and fails on the first request.
+    const known = reservationTargetsData.find((target) => target.emailPrefix === prefix)
+
+    if (!known) {
+      payload.logger.warn(`Skipping ${prefix}: no topic, calendar or sheet key configured for it`)
+      continue
+    }
 
     await payload.create({
       collection: 'reservation-targets',
       data: {
-        emailPrefix: emailPrefix.trim(),
+        emailPrefix: prefix,
         labelFi: labelFi.trim(),
         labelEn: labelEn.trim(),
         category,
         active: true,
         sortOrder: sortOrder++,
-        telegramTopicId: '1', // Default - update in admin panel with actual topic ID
+        telegramTopicId: known.telegramTopicId,
+        googleCalendarId: known.googleCalendarId,
+        sheetVenueKey: known.sheetVenueKey,
       },
     })
 
-    payload.logger.info(`Created target: ${emailPrefix}`)
+    payload.logger.info(`Created target: ${prefix}`)
   }
 
   payload.logger.info(`Seeded ${seenPrefixes.size} reservation targets`)

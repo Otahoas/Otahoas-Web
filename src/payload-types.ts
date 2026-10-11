@@ -116,10 +116,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'reservation-settings': ReservationSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'reservation-settings': ReservationSettingsSelect<false> | ReservationSettingsSelect<true>;
   };
   locale: 'fi' | 'en';
   user: User & {
@@ -1116,7 +1118,7 @@ export interface ReservationTarget {
   /**
    * Telegram topic/thread ID where access requests will be sent. Find it by copying a message link from the topic.
    */
-  telegramTopicId?: string | null;
+  telegramTopicId: string;
   /**
    * Label shown in Finnish dropdown
    */
@@ -1137,11 +1139,27 @@ export interface ReservationTarget {
   /**
    * Google Calendar ID (e.g., "abc123xyz@group.calendar.google.com"). Get from Google Calendar settings → Integrate calendar.
    */
-  googleCalendarId?: string | null;
+  googleCalendarId: string;
   /**
    * Calendar display color in hex format (e.g., "#3F51B5")
    */
   calendarColor?: string | null;
+  /**
+   * Exact value written to the reservation sheet column "Varattava tila". Must match the Apps Script calendarIDs keys character-for-character, or no calendar event is created.
+   */
+  sheetVenueKey:
+    | 'Lainatavarat'
+    | 'JMT 10 CD'
+    | 'JMT 10 D Soittohuone'
+    | 'JMT 10 H'
+    | 'JMT 11 AB'
+    | 'JMT 11 B Mekaniikkapaja'
+    | 'JMT 11 CD'
+    | 'SK 5 B'
+    | 'SK 6 C Puutyöpaja'
+    | 'SK 6 D'
+    | 'SMT 3 A'
+    | 'Kajakit ja SUP-laudat';
   updatedAt: string;
   createdAt: string;
 }
@@ -1175,6 +1193,31 @@ export interface AccessRequestSubmission {
   notificationSentTo?: string | null;
   sentAt?: string | null;
   emailStatus?: ('pending' | 'sent' | 'failed') | null;
+  /**
+   * Decided from Telegram. Read-only here because changing it would not write to the reservation sheet.
+   */
+  status?: ('pending' | 'accepted' | 'declined') | null;
+  /**
+   * Name of the keyholder or committee member who decided.
+   */
+  decidedBy?: string | null;
+  decidedByTelegramId?: string | null;
+  decidedAt?: string | null;
+  declineReason?: string | null;
+  /**
+   * Message carrying the Accept/Decline buttons, so it can be edited later.
+   */
+  telegramMessageId?: string | null;
+  telegramTopicId?: string | null;
+  /**
+   * Whether the latest state of this reservation reached the Google Sheet.
+   */
+  sheetSyncStatus?: ('not-written' | 'written' | 'failed') | null;
+  /**
+   * Row this reservation occupies. Verified against the Varaus-ID column before being patched.
+   */
+  sheetRowNumber?: number | null;
+  sheetError?: string | null;
   errorMessage?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1959,6 +2002,7 @@ export interface ReservationTargetsSelect<T extends boolean = true> {
   sortOrder?: T;
   googleCalendarId?: T;
   calendarColor?: T;
+  sheetVenueKey?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1974,6 +2018,16 @@ export interface AccessRequestSubmissionsSelect<T extends boolean = true> {
   notificationSentTo?: T;
   sentAt?: T;
   emailStatus?: T;
+  status?: T;
+  decidedBy?: T;
+  decidedByTelegramId?: T;
+  decidedAt?: T;
+  declineReason?: T;
+  telegramMessageId?: T;
+  telegramTopicId?: T;
+  sheetSyncStatus?: T;
+  sheetRowNumber?: T;
+  sheetError?: T;
   errorMessage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2325,6 +2379,28 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservation-settings".
+ */
+export interface ReservationSetting {
+  id: number;
+  /**
+   * Last known good copy of the keyholder tab in Google Sheets. Written automatically; used only when the sheet cannot be reached.
+   */
+  keyholderCache?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  keyholderCacheUpdatedAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2368,6 +2444,17 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservation-settings_select".
+ */
+export interface ReservationSettingsSelect<T extends boolean = true> {
+  keyholderCache?: T;
+  keyholderCacheUpdatedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
