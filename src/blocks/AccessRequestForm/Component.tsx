@@ -48,6 +48,14 @@ interface FormErrors {
   [key: string]: string
 }
 
+/** A clashing request, as the access-request endpoint reports it on a 409. */
+interface OverlapConflict {
+  status: string
+  startDate: string
+  startTime: string
+  endTime: string
+}
+
 const translations = {
   fi: {
     selectTarget: 'Valitse kohde',
@@ -79,6 +87,13 @@ const translations = {
     invalidEmail: 'Virheellinen sähköpostiosoite',
     invalidDate: 'Virheellinen päivämäärä',
     invalidTime: 'Virheellinen aika',
+    overlapTitle: 'Tilalle on jo varauspyyntö samaan aikaan',
+    overlapQuestion: 'Haluatko lähettää pyynnön silti?',
+    overlapExisting: 'Olemassa oleva pyyntö',
+    overlapPending: 'odottaa',
+    overlapAccepted: 'hyväksytty',
+    overlapConfirm: 'Lähetä silti',
+    overlapCancel: 'Muokkaa aikaa',
     successTitle: 'Käyttöpyyntö lähetetty!',
     errorTitle: 'Virhe',
     loadingTargets: 'Ladataan kohteita...',
@@ -133,6 +148,13 @@ const translations = {
     invalidEmail: 'Invalid email address',
     invalidDate: 'Invalid date',
     invalidTime: 'Invalid time',
+    overlapTitle: 'This space already has a request for the same time',
+    overlapQuestion: 'Do you want to send the request anyway?',
+    overlapExisting: 'Existing request',
+    overlapPending: 'pending',
+    overlapAccepted: 'accepted',
+    overlapConfirm: 'Send anyway',
+    overlapCancel: 'Change the time',
     successTitle: 'Access request sent!',
     errorTitle: 'Error',
     loadingTargets: 'Loading targets...',
@@ -257,6 +279,7 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
   const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(
     null,
   )
+  const [overlapConflicts, setOverlapConflicts] = useState<OverlapConflict[] | null>(null)
 
   // Fetch targets on mount
   useEffect(() => {
@@ -330,11 +353,12 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!validate()) return
-
+  /**
+   * Send the request. The server answers 409 with the clashing requests when the
+   * slot is already taken and `confirmOverlap` was not set; the form then asks
+   * and sends the same thing again with the flag.
+   */
+  const send = async (confirmOverlap: boolean) => {
     setIsSubmitting(true)
     setSubmitResult(null)
 
@@ -348,10 +372,18 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
           startDate: dateToISO(formData.startDate),
           endDate: dateToISO(formData.endDate),
           participants: formData.participants ? parseInt(formData.participants, 10) : undefined,
+          ...(confirmOverlap ? { confirmOverlap: true } : {}),
         }),
       })
 
       const data = await response.json()
+
+      if (response.status === 409 && data.overlap) {
+        setOverlapConflicts(data.conflicts ?? [])
+        return
+      }
+
+      setOverlapConflicts(null)
 
       if (response.ok && data.success) {
         setSubmitResult({ success: true, message: data.message })
@@ -387,6 +419,14 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!validate()) return
+
+    await send(false)
   }
 
   // Group targets by category
@@ -810,6 +850,46 @@ export const AccessRequestFormBlock: React.FC<AccessRequestFormBlockProps> = (pr
               </div>
             )}
           </div>
+
+          {/* The slot is taken. Advisory only, so the choice is the requester's. */}
+          {overlapConflicts && (
+            <div
+              role="alert"
+              className="rounded-lg border border-amber-500 bg-amber-50 p-4 text-amber-900 dark:bg-amber-950/40 dark:text-amber-100"
+            >
+              <h3 className="mb-2 font-bold">{t.overlapTitle}</h3>
+              {overlapConflicts.length > 0 && (
+                <ul className="mb-3 list-inside list-disc text-sm">
+                  {overlapConflicts.map((conflict, index) => (
+                    <li key={index}>
+                      {t.overlapExisting}: {conflict.startDate} {conflict.startTime}&ndash;
+                      {conflict.endTime} (
+                      {conflict.status === 'accepted' ? t.overlapAccepted : t.overlapPending})
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mb-3">{t.overlapQuestion}</p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => send(true)}
+                  className="rounded-lg bg-primary px-5 py-2 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
+                >
+                  {isSubmitting ? t.submitting : t.overlapConfirm}
+                </button>
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => setOverlapConflicts(null)}
+                  className="rounded-lg border border-current px-5 py-2 font-medium transition-colors hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                >
+                  {t.overlapCancel}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Submit Button */}
           <button

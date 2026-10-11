@@ -125,6 +125,16 @@ export const AccessRequestSubmissions: CollectionConfig = {
       },
     },
     {
+      name: 'overlapWarning',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        readOnly: true,
+        description:
+          'The requester was told this clashes with an existing request and sent it anyway.',
+      },
+    },
+    {
       name: 'telegramMessageId',
       type: 'text',
       admin: {

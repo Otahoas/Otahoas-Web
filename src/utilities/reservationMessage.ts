@@ -21,6 +21,8 @@ export interface AccessRequestBody {
   details?: string
   isPublicEvent?: string
   publicEventName?: string
+  /** Set by the form on a second submit, after the overlap was confirmed. */
+  confirmOverlap?: boolean
   [key: string]: unknown
 }
 
@@ -39,18 +41,35 @@ const escapeHtml = (str: string | undefined): string => {
 }
 
 /**
+ * Sits above everything else, because whoever is about to press Accept needs to
+ * see it before reading the details.
+ */
+export const OVERLAP_BANNER = '‼️<b>Previous overlapping access request exists</b>‼️'
+
+export interface RequestMessageOptions {
+  /** The requester was warned about a clash and sent it anyway. */
+  overlapWarning?: boolean | null
+}
+
+/**
  * The request body of the Telegram message. Built from the submission rather
  * than read back from Telegram, so an edit can reproduce it exactly.
  */
-export const buildRequestMessage = (data: AccessRequestBody, target: ReservationTarget): string => {
+export const buildRequestMessage = (
+  data: AccessRequestBody,
+  target: ReservationTarget,
+  options: RequestMessageOptions = {},
+): string => {
   const targetLabel = target.labelEn
 
-  const lines = [
+  const lines = options.overlapWarning ? [OVERLAP_BANNER, ''] : []
+
+  lines.push(
     `<b>Access Request: ${escapeHtml(targetLabel)}</b>`,
     '',
     `<b>Name:</b> ${escapeHtml(data.name)}`,
     `<b>Email:</b> ${escapeHtml(data.email)}`,
-  ]
+  )
 
   if (data.phone) lines.push(`<b>Phone:</b> ${escapeHtml(data.phone)}`)
   if (data.telegram) lines.push(`<b>Telegram:</b> ${escapeHtml(data.telegram)}`)

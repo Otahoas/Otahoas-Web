@@ -177,7 +177,9 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
       if (submission.telegramMessageId) {
         const edited = await editTelegramMessage({
           messageId: submission.telegramMessageId,
-          text: buildRequestMessage((submission.requestData ?? {}) as AccessRequestBody, target),
+          text: buildRequestMessage((submission.requestData ?? {}) as AccessRequestBody, target, {
+            overlapWarning: submission.overlapWarning,
+          }),
           replyMarkup: buildDecisionKeyboard(submissionId),
         })
 
@@ -302,7 +304,11 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
     }
 
     if (submission.telegramMessageId) {
-      const body = buildRequestMessage((submission.requestData ?? {}) as AccessRequestBody, target)
+      const body = buildRequestMessage(
+        (submission.requestData ?? {}) as AccessRequestBody,
+        target,
+        { overlapWarning: submission.overlapWarning },
+      )
 
       const edited = await editTelegramMessage({
         messageId: submission.telegramMessageId,

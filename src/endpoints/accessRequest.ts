@@ -8,6 +8,7 @@ import {
   type AccessRequestBody,
 } from '@/utilities/reservationMessage'
 import { recordPendingReservation } from '@/utilities/reservationSheet'
+import { findOverlappingRequests, parseRange } from '@/utilities/reservationOverlap'
 
 const _buildEmailContent = (
   data: AccessRequestBody,
@@ -203,8 +204,41 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
       )
     }
 
+    // Advisory overlap check. A clash never refuses the request -- two groups
+    // can legitimately want the same room at once -- but the requester confirms
+    // it, and the keyholder deciding it sees a marker on the message.
+    let overlapWarning = false
+    const range = parseRange(body)
+
+    if (range) {
+      const conflicts = await findOverlappingRequests({
+        payload,
+        targetId: target.id,
+        range,
+      })
+
+      if (conflicts.length > 0) {
+        if (!body.confirmOverlap) {
+          return Response.json(
+            {
+              overlap: true,
+              conflicts: conflicts.map((conflict) => ({
+                status: conflict.status,
+                startDate: formatDateFinnish(conflict.start.toISOString().slice(0, 10)),
+                startTime: conflict.start.toTimeString().slice(0, 5),
+                endTime: conflict.end.toTimeString().slice(0, 5),
+              })),
+            },
+            { status: 409 },
+          )
+        }
+
+        overlapWarning = true
+      }
+    }
+
     // Build Telegram message
-    const telegramMessage = buildRequestMessage(body, target)
+    const telegramMessage = buildRequestMessage(body, target, { overlapWarning })
 
     // Create submission record first
     const submission = await payload.create({
@@ -218,6 +252,7 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
         sentAt: new Date().toISOString(),
         emailStatus: 'pending',
         status: 'pending',
+        overlapWarning,
         telegramTopicId: target.telegramTopicId,
         sheetSyncStatus: 'not-written',
       },

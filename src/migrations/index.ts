@@ -13,6 +13,7 @@ import * as migration_20260416_202708 from './20260416_202708'
 import * as migration_20261011_165535_add_reservation_status from './20261011_165535_add_reservation_status'
 import * as migration_20261011_191807_require_sheet_venue_key from './20261011_191807_require_sheet_venue_key'
 import * as migration_20261011_192057_require_target_config from './20261011_192057_require_target_config'
+import * as migration_20261011_221229_add_overlap_warning from './20261011_221229_add_overlap_warning'
 
 export const migrations = [
   {
@@ -89,5 +90,10 @@ export const migrations = [
     up: migration_20261011_192057_require_target_config.up,
     down: migration_20261011_192057_require_target_config.down,
     name: '20261011_192057_require_target_config',
+  },
+  {
+    up: migration_20261011_221229_add_overlap_warning.up,
+    down: migration_20261011_221229_add_overlap_warning.down,
+    name: '20261011_221229_add_overlap_warning',
   },
 ]

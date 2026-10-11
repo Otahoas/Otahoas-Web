@@ -1205,6 +1205,10 @@ export interface AccessRequestSubmission {
   decidedAt?: string | null;
   declineReason?: string | null;
   /**
+   * The requester was told this clashes with an existing request and sent it anyway.
+   */
+  overlapWarning?: boolean | null;
+  /**
    * Message carrying the Accept/Decline buttons, so it can be edited later.
    */
   telegramMessageId?: string | null;
@@ -2023,6 +2027,7 @@ export interface AccessRequestSubmissionsSelect<T extends boolean = true> {
   decidedByTelegramId?: T;
   decidedAt?: T;
   declineReason?: T;
+  overlapWarning?: T;
   telegramMessageId?: T;
   telegramTopicId?: T;
   sheetSyncStatus?: T;
