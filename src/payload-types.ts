@@ -1145,7 +1145,7 @@ export interface ReservationTarget {
    */
   calendarColor?: string | null;
   /**
-   * Exact value written to the reservation sheet column "Varattava tila". Must match the Apps Script calendarIDs keys character-for-character, or no calendar event is created.
+   * Exact value written to the reservation sheet column "Varattava tila", and the venue name shown in the calendar event title.
    */
   sheetVenueKey:
     | 'Lainatavarat'
@@ -1222,6 +1222,19 @@ export interface AccessRequestSubmission {
    */
   sheetRowNumber?: number | null;
   sheetError?: string | null;
+  /**
+   * Event in the space's own calendar.
+   */
+  calendarEventId?: string | null;
+  /**
+   * Entry in the shared calendar, for an approved public event.
+   */
+  calendarGeneralEventId?: string | null;
+  /**
+   * Whether the latest state of this reservation reached Google Calendar.
+   */
+  calendarSyncStatus?: ('not-written' | 'written' | 'failed') | null;
+  calendarError?: string | null;
   errorMessage?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -2033,6 +2046,10 @@ export interface AccessRequestSubmissionsSelect<T extends boolean = true> {
   sheetSyncStatus?: T;
   sheetRowNumber?: T;
   sheetError?: T;
+  calendarEventId?: T;
+  calendarGeneralEventId?: T;
+  calendarSyncStatus?: T;
+  calendarError?: T;
   errorMessage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2389,6 +2406,10 @@ export interface Footer {
 export interface ReservationSetting {
   id: number;
   /**
+   * Google Calendar ID the public events of approved bookings are published to (e.g. example@group.calendar.google.com). Each space has its own calendar on its reservation target; this is the one that belongs to no single space. Share it with the service account as "Make changes to events".
+   */
+  generalCalendarId?: string | null;
+  /**
    * Last known good copy of the keyholder tab in Google Sheets. Written automatically; used only when the sheet cannot be reached.
    */
   keyholderCache?:
@@ -2458,6 +2479,7 @@ export interface FooterSelect<T extends boolean = true> {
  * via the `definition` "reservation-settings_select".
  */
 export interface ReservationSettingsSelect<T extends boolean = true> {
+  generalCalendarId?: T;
   keyholderCache?: T;
   keyholderCacheUpdatedAt?: T;
   updatedAt?: T;

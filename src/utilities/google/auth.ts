@@ -25,22 +25,37 @@ const parseCredentials = (): Record<string, string> => {
   }
 }
 
-let cached: JWT | null = null
+/**
+ * Cached per scope set, not globally.
+ *
+ * A JWT is minted for the scopes it was created with, and asking it for
+ * anything else fails with "Insufficient Permission". Caching one instance for
+ * the whole process meant the first caller's scopes won: once the calendar was
+ * added, a Sheets write that happened to run second was refused. The symptom is
+ * misleading -- it reads as a sharing problem on the spreadsheet rather than as
+ * the wrong token.
+ */
+const cache = new Map<string, JWT>()
 
 export const getGoogleAuth = (scopes: string[]): JWT => {
-  if (cached) {
-    return cached
+  const key = [...scopes].sort().join(' ')
+  const existing = cache.get(key)
+
+  if (existing) {
+    return existing
   }
 
   const credentials = parseCredentials()
 
-  cached = new google.auth.JWT({
+  const auth = new google.auth.JWT({
     email: credentials.client_email,
     key: credentials.private_key,
     scopes,
   })
 
-  return cached
+  cache.set(key, auth)
+
+  return auth
 }
 
 export const isGoogleConfigured = (): boolean =>

@@ -22,7 +22,7 @@ interface ReservationTargetData {
   /** Placeholder only; the real topic is configured in the admin panel. */
   telegramTopicId: string
   googleCalendarId: string
-  /** Exact value written to the reservation sheet, matching the Apps Script. */
+  /** Exact value written to the reservation sheet, and shown in calendar titles. */
   sheetVenueKey: SheetVenueKey
 }
 

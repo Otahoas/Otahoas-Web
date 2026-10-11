@@ -7,17 +7,14 @@ import { appendRow, readCell, readColumn, updateRanges } from './google/sheets'
  * appended the moment a request arrives, and the Telegram buttons patch its
  * status afterwards.
  *
- * The Apps Script (syncCalendar, on a 5-minute time-driven trigger) reconciles
- * each row's calendar events with its status: pending shows up marked as
- * unconfirmed, accepted as a normal booking, and declined or cancelled is
- * removed. It notices a change by comparing the status column with column N,
- * where it records what it last pushed. When calendar handling moves in-house,
- * this file is the single swap point.
+ * The only thing read back is the id column, to find which row a decision
+ * belongs to. No behaviour depends on the sheet's contents, and nothing else
+ * reads it: the calendar is handled in reservationCalendar.ts.
  *
  * Sheet columns, in order:
  *   A  1 Timestamp                      -- when the request arrived
  *   B  2 Varauksen status               -- patched on every decision
- *   C  3 Varattava tila                 -- must match the Apps Script calendarIDs keys
+ *   C  3 Varattava tila                 -- the venue, as the committee knows it
  *   D  4 Tilan käyttäjän nimi           -- requester, shortened to initials by the script
  *   E  5 Tilan käyttäjän yhdistys       -- or the "not an association" sentinel
  *   F  6 Varaus alkaa
@@ -26,21 +23,15 @@ import { appendRow, readCell, readColumn, updateRanges } from './google/sheets'
  *   I  9 Hyväksyjä                      -- the keyholder who accepted, initials in the calendar
  *   J 10 Käsitelty                      -- when the decision was made
  *   K 11 Varaus-ID                      -- the submission id, how a row is found again
- *   L 12 Google Calendar Event ID         -- the script owns it
- *   M 13 Google Calendar General Event ID -- the script owns it
- *   N 14 Kalenterin tila                  -- the script owns it
- *
- * Appends deliberately stop at M so column N stays blank on a new row, which is
- * what makes the script treat it as not yet synced.
  */
 
-/** Sentinels the Apps Script compares against. Changing these breaks it. */
+/** Sentinels carried over from the Google Forms era, kept so old and new rows read alike. */
 const NOT_AN_ASSOCIATION = 'Ei ole yhdistys'
 const NOT_A_PUBLIC_EVENT = 'Ei ole yleinen tilaisuus'
 
 /**
- * Status column values. The Apps Script compares against ACCEPTED literally, so
- * these strings are part of the contract with it.
+ * Status column values. These are also the sheet's own dropdown, so changing one
+ * means changing the dropdown and every existing row.
  */
 export const SHEET_STATUS = {
   pending: 'Odottaa',
@@ -68,8 +59,7 @@ interface RequestData {
 
 /**
  * "2026-10-09 18:00". Sheets parses this into a datetime under USER_ENTERED,
- * and if it ever lands as plain text the Apps Script's `new Date(...)` still
- * reads it correctly.
+ * and if it ever lands as plain text it is still unambiguous to read.
  */
 const formatDateTime = (date?: string, time?: string): string => {
   if (!date) {
@@ -102,7 +92,7 @@ export const buildReservationRow = (args: RowArgs): string[] => {
 
   if (!target.sheetVenueKey) {
     throw new Error(
-      `Target "${target.emailPrefix}" has no sheetVenueKey, so the Apps Script cannot resolve a calendar`,
+      `Target "${target.emailPrefix}" has no sheetVenueKey, so the reservation has no venue to record`,
     )
   }
 
@@ -126,8 +116,6 @@ export const buildReservationRow = (args: RowArgs): string[] => {
     approverName ?? '',
     handledAt ? formatTimestamp(handledAt) : '',
     String(submission.id),
-    '',
-    '',
   ]
 }
 
@@ -136,8 +124,8 @@ export interface RecordResult {
 }
 
 /**
- * Append the row for a request that has just arrived. It carries status
- * "Odottaa", so the Apps Script leaves it alone until someone accepts.
+ * Append the row for a request that has just arrived, carrying status
+ * "Odottaa".
  */
 export const recordPendingReservation = async (args: {
   submission: AccessRequestSubmission

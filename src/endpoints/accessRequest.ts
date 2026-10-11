@@ -9,6 +9,7 @@ import {
 } from '@/utilities/reservationMessage'
 import { recordPendingReservation } from '@/utilities/reservationSheet'
 import { findOverlappingRequests, parseRange } from '@/utilities/reservationOverlap'
+import { syncAndRecordCalendar } from '@/utilities/reservationCalendar'
 
 const _buildEmailContent = (
   data: AccessRequestBody,
@@ -279,6 +280,9 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
           telegramMessageId: sent.messageId ? String(sent.messageId) : undefined,
         },
       })
+
+      // The pending booking shows in the calendar at once, marked unconfirmed.
+      await syncAndRecordCalendar({ payload, submission, target })
 
       // The sheet is a mirror, so a failure here must not fail the request.
       // A decision later appends the row if it turns out to be missing.

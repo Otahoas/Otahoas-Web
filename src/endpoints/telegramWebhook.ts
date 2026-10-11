@@ -10,6 +10,7 @@ import {
   type AccessRequestBody,
 } from '@/utilities/reservationMessage'
 import { recordDecision, SHEET_STATUS } from '@/utilities/reservationSheet'
+import { syncAndRecordCalendar } from '@/utilities/reservationCalendar'
 import { RegistryUnavailableError, resolveActor } from '@/utilities/keyholderRegistry'
 
 interface TelegramCallbackQuery {
@@ -137,9 +138,9 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
 
     if (decision === 'reopen') {
       // Both outcomes are reversible. Putting the row back to "Odottaa" is
-      // enough to undo an accept as well: the Apps Script reconciles the
-      // calendar from the status, so it restores the unconfirmed marking on the
-      // booking and removes the public event on its next pass.
+      // enough to undo an accept as well: the calendar is reconciled from the
+      // status, so the unconfirmed marking returns and the public event comes
+      // down.
       if (submission.status !== 'declined' && submission.status !== 'accepted') {
         await answerCallbackQuery({
           callbackQueryId: query.id,
@@ -187,6 +188,13 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
           payload.logger.error(`Failed to edit Telegram message: ${edited.error}`)
         }
       }
+
+      // Back to unconfirmed in the calendar, and the public entry comes down.
+      await syncAndRecordCalendar({
+        payload,
+        submission: { ...submission, status: 'pending', decidedBy: null },
+        target,
+      })
 
       try {
         await recordDecision({
@@ -270,11 +278,22 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
       },
     })
 
+    // The calendar follows the decision in this same request rather than on a
+    // five-minute poll, so an approval is visible as soon as it is made.
+    const calendar = await syncAndRecordCalendar({
+      payload,
+      submission: {
+        ...submission,
+        status: decision === 'accept' ? 'accepted' : 'declined',
+        decidedBy,
+      },
+      target,
+    })
+
     let sheetError: string | undefined
 
-    // Both outcomes reach the sheet. Only "Hyväksytty" makes the Apps Script
-    // create calendar events, so a decline is recorded without any calendar
-    // side effect.
+    // Both outcomes reach the sheet, which is a mirror only -- the calendar was
+    // already reconciled above.
     try {
       const { rowNumber } = await recordDecision({
         submission,
@@ -318,6 +337,7 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
           decidedBy,
           decidedAt,
           sheetFailed: Boolean(sheetError),
+          calendarFailed: !calendar.ok,
         }),
         // Either outcome can be taken back by the committee, so both carry the
         // reopen button.
@@ -331,14 +351,14 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
 
     await answerCallbackQuery({
       callbackQueryId: query.id,
-      text: sheetError
-        ? decision === 'accept'
-          ? 'Accepted, but writing to the reservation sheet failed'
-          : 'Declined, but writing to the reservation sheet failed'
-        : decision === 'accept'
-          ? 'Accepted'
-          : 'Declined',
-      showAlert: Boolean(sheetError),
+      text: [
+        decision === 'accept' ? 'Accepted' : 'Declined',
+        sheetError ? 'the reservation sheet was not updated' : null,
+        calendar.ok ? null : 'the calendar was not updated',
+      ]
+        .filter(Boolean)
+        .join(' — '),
+      showAlert: Boolean(sheetError) || !calendar.ok,
     })
 
     return ok()

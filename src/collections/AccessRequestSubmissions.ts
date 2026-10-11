@@ -181,6 +181,44 @@ export const AccessRequestSubmissions: CollectionConfig = {
       },
     },
     {
+      name: 'calendarEventId',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: "Event in the space's own calendar.",
+      },
+    },
+    {
+      name: 'calendarGeneralEventId',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Entry in the shared calendar, for an approved public event.',
+      },
+    },
+    {
+      name: 'calendarSyncStatus',
+      type: 'select',
+      options: [
+        { label: 'Not written', value: 'not-written' },
+        { label: 'Written', value: 'written' },
+        { label: 'Failed', value: 'failed' },
+      ],
+      defaultValue: 'not-written',
+      admin: {
+        readOnly: true,
+        description: 'Whether the latest state of this reservation reached Google Calendar.',
+      },
+    },
+    {
+      name: 'calendarError',
+      type: 'textarea',
+      admin: {
+        readOnly: true,
+        condition: (data) => data?.calendarSyncStatus === 'failed',
+      },
+    },
+    {
       name: 'errorMessage',
       type: 'textarea',
       admin: {

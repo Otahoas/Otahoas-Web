@@ -20,8 +20,7 @@ let cachedTabName: string | null = null
 
 /**
  * The tab holding the reservations. GOOGLE_SHEETS_TAB wins; otherwise the
- * first tab is used, which is also the one the Apps Script scans through
- * getActiveSheet().
+ * first tab is used, which is the only one the reservation file has.
  */
 const getTabName = async (): Promise<string> => {
   const configured = process.env.GOOGLE_SHEETS_TAB?.trim()
@@ -66,8 +65,7 @@ export interface AppendResult {
  * Append one row to the reservation sheet.
  *
  * USER_ENTERED lets Sheets parse the datetime strings into real date values the
- * way a form submission would. The calendar ID columns are deliberately left
- * empty: the Apps Script treats an empty one as "not yet processed".
+ * way a form submission would.
  */
 export const appendRow = async (values: string[]): Promise<AppendResult> => {
   const sheets = getSheetsClient()
@@ -75,7 +73,7 @@ export const appendRow = async (values: string[]): Promise<AppendResult> => {
 
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId: getSpreadsheetId(),
-    range: `${tab}!A:M`,
+    range: `${tab}!A:K`,
     valueInputOption: 'USER_ENTERED',
     insertDataOption: 'INSERT_ROWS',
     requestBody: {

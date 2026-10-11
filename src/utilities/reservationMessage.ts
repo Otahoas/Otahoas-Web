@@ -135,8 +135,9 @@ export const buildDecidedMessage = (args: {
   decidedAt: Date
   declineReason?: string
   sheetFailed?: boolean
+  calendarFailed?: boolean
 }): string => {
-  const { body, status, decidedBy, decidedAt, declineReason, sheetFailed } = args
+  const { body, status, decidedBy, decidedAt, declineReason, sheetFailed, calendarFailed } = args
 
   const header =
     status === 'accepted'
@@ -147,6 +148,12 @@ export const buildDecidedMessage = (args: {
 
   if (status === 'accepted' && sheetFailed) {
     lines.push('⚠️ <i>Could not write this to the reservation sheet — please add it by hand.</i>')
+  }
+
+  // Shown for both outcomes: a decline that failed to sync leaves a booking
+  // still showing in the calendar, which misleads anyone looking at it.
+  if (calendarFailed) {
+    lines.push('⚠️ <i>Could not update the calendar — it may still show the old state.</i>')
   }
 
   if (status === 'declined' && declineReason) {

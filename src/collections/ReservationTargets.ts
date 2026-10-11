@@ -129,7 +129,7 @@ export const ReservationTargets: CollectionConfig = {
       ].map((value) => ({ label: value, value })),
       admin: {
         description:
-          'Exact value written to the reservation sheet column "Varattava tila". Must match the Apps Script calendarIDs keys character-for-character, or no calendar event is created.',
+          'Exact value written to the reservation sheet column "Varattava tila", and the venue name shown in the calendar event title.',
       },
     },
   ],

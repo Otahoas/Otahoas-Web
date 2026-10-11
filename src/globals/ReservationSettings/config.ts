@@ -15,6 +15,15 @@ export const ReservationSettings: GlobalConfig = {
   },
   fields: [
     {
+      name: 'generalCalendarId',
+      type: 'text',
+      label: 'Shared calendar for public events',
+      admin: {
+        description:
+          'Google Calendar ID the public events of approved bookings are published to (e.g. example@group.calendar.google.com). Each space has its own calendar on its reservation target; this is the one that belongs to no single space. Share it with the service account as "Make changes to events".',
+      },
+    },
+    {
       name: 'keyholderCache',
       type: 'json',
       admin: {

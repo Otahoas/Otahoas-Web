@@ -14,6 +14,8 @@ import * as migration_20261011_165535_add_reservation_status from './20261011_16
 import * as migration_20261011_191807_require_sheet_venue_key from './20261011_191807_require_sheet_venue_key'
 import * as migration_20261011_192057_require_target_config from './20261011_192057_require_target_config'
 import * as migration_20261011_221229_add_overlap_warning from './20261011_221229_add_overlap_warning'
+import * as migration_20261011_223554_add_calendar_sync from './20261011_223554_add_calendar_sync'
+import * as migration_20261011_224532_add_general_calendar_setting from './20261011_224532_add_general_calendar_setting'
 
 export const migrations = [
   {
@@ -95,5 +97,15 @@ export const migrations = [
     up: migration_20261011_221229_add_overlap_warning.up,
     down: migration_20261011_221229_add_overlap_warning.down,
     name: '20261011_221229_add_overlap_warning',
+  },
+  {
+    up: migration_20261011_223554_add_calendar_sync.up,
+    down: migration_20261011_223554_add_calendar_sync.down,
+    name: '20261011_223554_add_calendar_sync',
+  },
+  {
+    up: migration_20261011_224532_add_general_calendar_setting.up,
+    down: migration_20261011_224532_add_general_calendar_setting.down,
+    name: '20261011_224532_add_general_calendar_setting',
   },
 ]

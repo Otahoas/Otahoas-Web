@@ -4,10 +4,10 @@ import type { AccessRequestSubmission, ReservationTarget } from '@/payload-types
 import { buildReservationRow, SHEET_STATUS } from '@/utilities/reservationSheet'
 
 /**
- * These assertions encode the contract with the existing Apps Script
- * (findRow/newEvent). Column order, the status value it waits for and the two
- * sentinel strings are compared literally over there, so changing them silently
- * stops calendar events from being created.
+ * The sheet is read by committee members, and its status column is also its own
+ * dropdown. These assertions pin the column order and the exact strings, so a
+ * reordering or a reworded status cannot slip in and leave older rows reading
+ * differently from newer ones.
  */
 
 const target = {
@@ -61,8 +61,6 @@ describe('buildReservationRow', () => {
       '',
       '',
       '42',
-      '',
-      '',
     ])
   })
 
@@ -80,7 +78,7 @@ describe('buildReservationRow', () => {
     expect(row[9]).toBe('2026-10-11 09:30:00')
   })
 
-  it('keeps the calendar columns empty so the Apps Script claims the row', () => {
+  it('writes exactly the eleven columns the sheet has', () => {
     const row = buildReservationRow({
       submission: submission(fullRequest),
       target,
@@ -89,9 +87,10 @@ describe('buildReservationRow', () => {
       handledAt,
     })
 
-    expect(row).toHaveLength(13)
-    expect(row[11]).toBe('')
-    expect(row[12]).toBe('')
+    // The id column is last, so appends must not reach past it. Anything extra
+    // would recreate the calendar columns the sheet no longer has.
+    expect(row).toHaveLength(11)
+    expect(row[row.length - 1]).toBe('42')
   })
 
   it('carries the submission id so the row can be found again', () => {
