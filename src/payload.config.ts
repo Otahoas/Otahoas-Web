@@ -13,6 +13,7 @@ import { ReservationTargets } from './collections/ReservationTargets'
 import { AccessRequestSubmissions } from './collections/AccessRequestSubmissions'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { ReservationSettings } from './globals/ReservationSettings/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -22,6 +23,7 @@ import {
   reservationTargetCalendarsHandler,
 } from './endpoints/accessRequest'
 import { migrateOldSite } from './endpoints/seed/migrate-old-site'
+import { telegramWebhookHandler } from './endpoints/telegramWebhook'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -89,7 +91,7 @@ export default buildConfig({
     AccessRequestSubmissions,
   ],
   cors: [getServerSideURL(), 'https://otahoas.fi', 'https://www.otahoas.fi'].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, ReservationSettings],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,
@@ -98,6 +100,11 @@ export default buildConfig({
       path: '/access-request',
       method: 'post',
       handler: accessRequestHandler,
+    },
+    {
+      path: '/telegram/webhook',
+      method: 'post',
+      handler: telegramWebhookHandler,
     },
     {
       path: '/reservation-targets',

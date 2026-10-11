@@ -28,7 +28,15 @@ export const ReservationTargets: CollectionConfig = {
     {
       name: 'telegramTopicId',
       type: 'text',
+      required: true,
       defaultValue: '1',
+      // The collection is publicly readable so the booking form can fill its
+      // dropdown, but the browser never needs this: the form posts a target id
+      // and the server looks the topic up. Field-level access covers Payload's
+      // own REST and GraphQL endpoints too, not just the custom handler.
+      access: {
+        read: ({ req: { user } }) => Boolean(user),
+      },
       admin: {
         description:
           'Telegram topic/thread ID where access requests will be sent. Find it by copying a message link from the topic.',
@@ -83,6 +91,7 @@ export const ReservationTargets: CollectionConfig = {
     {
       name: 'googleCalendarId',
       type: 'text',
+      required: true,
       admin: {
         description:
           'Google Calendar ID (e.g., "abc123xyz@group.calendar.google.com"). Get from Google Calendar settings → Integrate calendar.',
@@ -94,6 +103,33 @@ export const ReservationTargets: CollectionConfig = {
       defaultValue: '#3F51B5',
       admin: {
         description: 'Calendar display color in hex format (e.g., "#3F51B5")',
+      },
+    },
+    {
+      name: 'sheetVenueKey',
+      type: 'select',
+      required: true,
+      // Internal bookkeeping, like the topic id above.
+      access: {
+        read: ({ req: { user } }) => Boolean(user),
+      },
+      options: [
+        'Lainatavarat',
+        'JMT 10 CD',
+        'JMT 10 D Soittohuone',
+        'JMT 10 H',
+        'JMT 11 AB',
+        'JMT 11 B Mekaniikkapaja',
+        'JMT 11 CD',
+        'SK 5 B',
+        'SK 6 C Puutyöpaja',
+        'SK 6 D',
+        'SMT 3 A',
+        'Kajakit ja SUP-laudat',
+      ].map((value) => ({ label: value, value })),
+      admin: {
+        description:
+          'Exact value written to the reservation sheet column "Varattava tila". Must match the Apps Script calendarIDs keys character-for-character, or no calendar event is created.',
       },
     },
   ],

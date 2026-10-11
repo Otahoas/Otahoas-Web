@@ -63,6 +63,27 @@ services:
         condition: service_healthy
     command: sh -lc "pnpm payload migrate"
     restart: 'no'
+  # One-off: tells Telegram where to deliver button presses. The registration
+  # lives on Telegram's side, so this survives redeploys and is only re-run when
+  # the URL, the webhook secret or the bot token changes. Deliberately not part
+  # of app startup: one bot token can have only one update consumer, so an
+  # automatic setWebhook would let any environment silently steal production's
+  # button presses.
+  #
+  #   docker compose -f docker-compose.prod.yml run --rm webhook
+  #   docker compose -f docker-compose.prod.yml run --rm webhook \
+  #     sh -lc "pnpm tsx scripts/set-telegram-webhook.ts --status"
+  webhook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+    command: sh -lc "pnpm tsx scripts/set-telegram-webhook.ts"
+    restart: 'no'
   seed:
     build:
       context: .

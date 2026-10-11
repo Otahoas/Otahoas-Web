@@ -13,3 +13,6 @@
 **/docs/**
 tsconfig.json
 
+# Mirrors the code that lives in the Apps Script editor; keeping its original
+# formatting makes the two easy to compare when pasting.
+**/*.gs

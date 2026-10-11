@@ -5,7 +5,7 @@ import { authenticated } from '../access/authenticated'
 export const AccessRequestSubmissions: CollectionConfig = {
   slug: 'access-request-submissions',
   admin: {
-    defaultColumns: ['submitterName', 'target', 'sentAt', 'notificationSentTo'],
+    defaultColumns: ['submitterName', 'target', 'status', 'decidedBy', 'sentAt'],
     useAsTitle: 'submitterName',
     group: 'Varaukset',
   },
@@ -74,6 +74,100 @@ export const AccessRequestSubmissions: CollectionConfig = {
       ],
       admin: {
         readOnly: true,
+      },
+    },
+    {
+      name: 'status',
+      type: 'select',
+      defaultValue: 'pending',
+      options: [
+        { label: 'Pending', value: 'pending' },
+        { label: 'Accepted', value: 'accepted' },
+        { label: 'Declined', value: 'declined' },
+      ],
+      admin: {
+        readOnly: true,
+        description:
+          'Decided from Telegram. Read-only here because changing it would not write to the reservation sheet.',
+      },
+    },
+    {
+      name: 'decidedBy',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Name of the keyholder or committee member who decided.',
+      },
+    },
+    {
+      name: 'decidedByTelegramId',
+      type: 'text',
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      name: 'decidedAt',
+      type: 'date',
+      admin: {
+        readOnly: true,
+        date: {
+          pickerAppearance: 'dayAndTime',
+        },
+      },
+    },
+    {
+      name: 'declineReason',
+      type: 'textarea',
+      admin: {
+        readOnly: true,
+        condition: (data) => data?.status === 'declined',
+      },
+    },
+    {
+      name: 'telegramMessageId',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Message carrying the Accept/Decline buttons, so it can be edited later.',
+      },
+    },
+    {
+      name: 'telegramTopicId',
+      type: 'text',
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      name: 'sheetSyncStatus',
+      type: 'select',
+      options: [
+        { label: 'Not written', value: 'not-written' },
+        { label: 'Written', value: 'written' },
+        { label: 'Failed', value: 'failed' },
+      ],
+      defaultValue: 'not-written',
+      admin: {
+        readOnly: true,
+        description: 'Whether the latest state of this reservation reached the Google Sheet.',
+      },
+    },
+    {
+      name: 'sheetRowNumber',
+      type: 'number',
+      admin: {
+        readOnly: true,
+        description:
+          'Row this reservation occupies. Verified against the Varaus-ID column before being patched.',
+      },
+    },
+    {
+      name: 'sheetError',
+      type: 'textarea',
+      admin: {
+        readOnly: true,
+        condition: (data) => data?.sheetSyncStatus === 'failed',
       },
     },
     {

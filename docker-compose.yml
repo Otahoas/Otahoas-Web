@@ -18,8 +18,6 @@ services:
       - postgres
     env_file:
       - .env
-    environment:
-      - COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
   postgres:
     image: postgres:16-alpine
