@@ -136,13 +136,14 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
     const isKeyholder = actor.found
 
     if (decision === 'reopen') {
-      // Only a decline is reversible. An accept has already reached the sheet,
-      // and the Apps Script may have created calendar events we cannot remove
-      // until calendar handling moves in-house.
-      if (submission.status !== 'declined') {
+      // Both outcomes are reversible. Putting the row back to "Odottaa" is
+      // enough to undo an accept as well: the Apps Script reconciles the
+      // calendar from the status, so it restores the unconfirmed marking on the
+      // booking and removes the public event on its next pass.
+      if (submission.status !== 'declined' && submission.status !== 'accepted') {
         await answerCallbackQuery({
           callbackQueryId: query.id,
-          text: 'Only a declined request can be reopened',
+          text: 'This request is already open',
           showAlert: true,
         })
         return ok()
@@ -312,9 +313,9 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
           decidedAt,
           sheetFailed: Boolean(sheetError),
         }),
-        // A decline stays reversible; an accept is final until the override
-        // flow exists, because its row is already in the sheet.
-        replyMarkup: decision === 'decline' ? buildReopenKeyboard(submissionId) : null,
+        // Either outcome can be taken back by the committee, so both carry the
+        // reopen button.
+        replyMarkup: buildReopenKeyboard(submissionId),
       })
 
       if (!edited.success) {

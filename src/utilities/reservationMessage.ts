@@ -97,7 +97,7 @@ export const buildDecisionKeyboard = (submissionId: number | string): InlineKeyb
   ],
 })
 
-/** Shown on a declined request so the committee can undo a mis-click. */
+/** Shown on a decided request so the committee can undo a mis-click. */
 export const buildReopenKeyboard = (submissionId: number | string): InlineKeyboardMarkup => ({
   inline_keyboard: [[{ text: '↩️ Reopen', callback_data: `reopen:${submissionId}` }]],
 })
