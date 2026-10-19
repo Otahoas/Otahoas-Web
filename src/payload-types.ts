@@ -2459,7 +2459,7 @@ export interface ReservationSetting {
   createdAt?: string | null;
 }
 /**
- * Emails sent to the person who made a reservation request. Each is sent in the language the request was made in; write both the Suomi and English versions.
+ * Emails sent to the person who made a reservation request, in the language the request was made in. Switch the locale at the top to edit the Suomi and English versions.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "reservation-emails".
@@ -2467,40 +2467,40 @@ export interface ReservationSetting {
 export interface ReservationEmail {
   id: number;
   /**
-   * Where replies go when there is no contact person yet: the "request received" email, and a decision by someone without an email in the keyholder tab. Accept and decline emails otherwise reply to the person who decided. Defaults to otahoas@otahoas.fi.
+   * Where replies go when there is no contact person yet: the "request received" email, and a decision by someone without an email in the keyholder tab. Accept and decline emails otherwise reply to the person who decided.
    */
   replyTo?: string | null;
   /**
-   * Closing text at the end of every email, below a line: who we are and how to reach the committee. Email addresses and https:// links become clickable. Leave empty for the built-in text.
+   * Closing text at the end of every email, below a line: who we are and how to reach the committee. Email addresses and https:// links become clickable. Clear the field to go back to the built-in text.
    */
   signature?: string | null;
   received?: {
     /**
-     * Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}
+     * Placeholders: {name}, {space}, {start}, {end}. Clear the field to go back to the built-in text.
      */
     subject?: string | null;
     /**
-     * Opening text above the reservation details. Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}
+     * Opening text above the contact person and reservation details, which are added automatically. A blank line starts a new paragraph. Placeholders: {name}, {space}, {start}, {end}. Clear the field to go back to the built-in text.
      */
     intro?: string | null;
   };
   accepted?: {
     /**
-     * Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     * Placeholders: {name}, {space}, {start}, {end}, {decidedBy}. Clear the field to go back to the built-in text.
      */
     subject?: string | null;
     /**
-     * Opening text above the reservation details. Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     * Opening text above the contact person and reservation details, which are added automatically. A blank line starts a new paragraph. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}. Clear the field to go back to the built-in text.
      */
     intro?: string | null;
   };
   declined?: {
     /**
-     * Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     * Placeholders: {name}, {space}, {start}, {end}, {decidedBy}. Clear the field to go back to the built-in text.
      */
     subject?: string | null;
     /**
-     * Opening text above the reservation details. Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     * Opening text above the contact person and reservation details, which are added automatically. A blank line starts a new paragraph. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}. Clear the field to go back to the built-in text.
      */
     intro?: string | null;
   };
