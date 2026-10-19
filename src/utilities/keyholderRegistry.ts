@@ -78,6 +78,9 @@ export interface Actor {
   isCommittee: boolean
   /** True when this press is what resolved the person's Telegram ID. */
   bound: boolean
+  /** Contact details passed on to the requester; empty when unknown. */
+  email: string
+  username: string
 }
 
 export const resolveActor = async (args: {
@@ -89,6 +92,7 @@ export const resolveActor = async (args: {
   const { payload, telegramUserId, username, displayName } = args
   const sheet = await loadSheet(payload)
 
+  const normalized = normalizeUsername(username)
   const byId = sheet.rows.find((row) => row.telegramUserId.trim() === telegramUserId)
 
   if (byId) {
@@ -97,14 +101,24 @@ export const resolveActor = async (args: {
       name: byId.name || displayName,
       isCommittee: byId.isCommittee,
       bound: false,
+      // Snapshots cached before the email column was read have no email.
+      email: byId.email ?? '',
+      username: byId.username || normalized,
     }
   }
 
-  // No ID on file yet: fall back to the username the committee typed, once.
-  const normalized = normalizeUsername(username)
+  const notFound: Actor = {
+    found: false,
+    name: displayName,
+    isCommittee: false,
+    bound: false,
+    email: '',
+    username: normalized,
+  }
 
+  // No ID on file yet: fall back to the username the committee typed, once.
   if (!normalized) {
-    return { found: false, name: displayName, isCommittee: false, bound: false }
+    return notFound
   }
 
   const byUsername = sheet.rows.find(
@@ -112,7 +126,7 @@ export const resolveActor = async (args: {
   )
 
   if (!byUsername) {
-    return { found: false, name: displayName, isCommittee: false, bound: false }
+    return notFound
   }
 
   let bound = false
@@ -145,5 +159,7 @@ export const resolveActor = async (args: {
     name: byUsername.name || displayName,
     isCommittee: byUsername.isCommittee,
     bound,
+    email: byUsername.email ?? '',
+    username: byUsername.username,
   }
 }

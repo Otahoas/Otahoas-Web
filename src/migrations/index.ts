@@ -16,6 +16,7 @@ import * as migration_20261011_192057_require_target_config from './20261011_192
 import * as migration_20261011_221229_add_overlap_warning from './20261011_221229_add_overlap_warning'
 import * as migration_20261011_223554_add_calendar_sync from './20261011_223554_add_calendar_sync'
 import * as migration_20261011_224532_add_general_calendar_setting from './20261011_224532_add_general_calendar_setting'
+import * as migration_20261019_194522_add_reservation_emails from './20261019_194522_add_reservation_emails'
 
 export const migrations = [
   {
@@ -107,5 +108,10 @@ export const migrations = [
     up: migration_20261011_224532_add_general_calendar_setting.up,
     down: migration_20261011_224532_add_general_calendar_setting.down,
     name: '20261011_224532_add_general_calendar_setting',
+  },
+  {
+    up: migration_20261019_194522_add_reservation_emails.up,
+    down: migration_20261019_194522_add_reservation_emails.down,
+    name: '20261019_194522_add_reservation_emails',
   },
 ]

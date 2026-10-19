@@ -11,6 +11,7 @@ import {
 } from '@/utilities/reservationMessage'
 import { recordDecision, SHEET_STATUS } from '@/utilities/reservationSheet'
 import { syncAndRecordCalendar } from '@/utilities/reservationCalendar'
+import { sendReservationEmail } from '@/utilities/reservationEmail'
 import { RegistryUnavailableError, resolveActor } from '@/utilities/keyholderRegistry'
 
 interface TelegramCallbackQuery {
@@ -170,6 +171,8 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
           status: 'pending',
           decidedBy: null,
           decidedByTelegramId: null,
+          decidedByEmail: null,
+          decidedByTelegram: null,
           decidedAt: null,
           declineReason: null,
         },
@@ -274,6 +277,8 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
         status: decision === 'accept' ? 'accepted' : 'declined',
         decidedBy,
         decidedByTelegramId: actorId,
+        decidedByEmail: actor.email || null,
+        decidedByTelegram: actor.username || null,
         decidedAt: decidedAt.toISOString(),
       },
     })
@@ -322,6 +327,16 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
       })
     }
 
+    // Whoever decided becomes the requester's contact for the reservation,
+    // for a decline as much as for an accept.
+    const email = await sendReservationEmail({
+      payload,
+      submission,
+      target,
+      type: decision === 'accept' ? 'accepted' : 'declined',
+      decider: { name: decidedBy, email: actor.email, telegram: actor.username },
+    })
+
     if (submission.telegramMessageId) {
       const body = buildRequestMessage(
         (submission.requestData ?? {}) as AccessRequestBody,
@@ -338,6 +353,7 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
           decidedAt,
           sheetFailed: Boolean(sheetError),
           calendarFailed: !calendar.ok,
+          emailFailed: !email.ok,
         }),
         // Either outcome can be taken back by the committee, so both carry the
         // reopen button.
@@ -355,10 +371,11 @@ export const telegramWebhookHandler: PayloadHandler = async (req) => {
         decision === 'accept' ? 'Accepted' : 'Declined',
         sheetError ? 'the reservation sheet was not updated' : null,
         calendar.ok ? null : 'the calendar was not updated',
+        email.ok ? null : 'the requester was not emailed',
       ]
         .filter(Boolean)
         .join(' — '),
-      showAlert: Boolean(sheetError) || !calendar.ok,
+      showAlert: Boolean(sheetError) || !calendar.ok || !email.ok,
     })
 
     return ok()

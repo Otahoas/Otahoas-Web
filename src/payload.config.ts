@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -14,6 +15,7 @@ import { AccessRequestSubmissions } from './collections/AccessRequestSubmissions
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { ReservationSettings } from './globals/ReservationSettings/config'
+import { ReservationEmails } from './globals/ReservationEmails/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -91,7 +93,26 @@ export default buildConfig({
     AccessRequestSubmissions,
   ],
   cors: [getServerSideURL(), 'https://otahoas.fi', 'https://www.otahoas.fi'].filter(Boolean),
-  globals: [Header, Footer, ReservationSettings],
+  // Sends through our own mail server. Without SMTP_HOST,
+  // e.g. in local development, Payload only logs outgoing emails to the console.
+  email: process.env.SMTP_HOST
+    ? nodemailerAdapter({
+        defaultFromAddress: process.env.SMTP_FROM_ADDRESS || 'noreply@otahoas.fi',
+        defaultFromName: process.env.SMTP_FROM_NAME || 'OtaHoas',
+        transportOptions: {
+          host: process.env.SMTP_HOST,
+          port: Number(process.env.SMTP_PORT || 587),
+          // 465 is implicit TLS; 587 starts plain and upgrades with STARTTLS
+          secure: Number(process.env.SMTP_PORT) === 465,
+          requireTLS: true,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        },
+      })
+    : undefined,
+  globals: [Header, Footer, ReservationSettings, ReservationEmails],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

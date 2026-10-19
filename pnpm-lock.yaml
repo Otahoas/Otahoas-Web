@@ -13,6 +13,9 @@ importers:
       '@payloadcms/db-postgres':
         specifier: 3.72.0
         version: 3.72.0(payload@3.72.0(graphql@16.12.0)(typescript@5.7.3))
+      '@payloadcms/email-nodemailer':
+        specifier: 3.72.0
+        version: 3.72.0(payload@3.72.0(graphql@16.12.0)(typescript@5.7.3))
       '@payloadcms/live-preview-react':
         specifier: 3.72.0
         version: 3.72.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -2297,6 +2300,15 @@ packages:
       {
         integrity: sha512-X8Wo3WbLASeceMaixqOWqNqQ9YOiXTiE08V8nlbODWh3CO8026vU2oqPz7YKKKb5aVX1dirg5uArExAWZrmYuQ==,
       }
+    peerDependencies:
+      payload: 3.72.0
+
+  '@payloadcms/email-nodemailer@3.72.0':
+    resolution:
+      {
+        integrity: sha512-X3J6FFqwg3SwxDj2jvqdbC/Vk/tD1O6TNFGkXbM1CAUKP5ThraXzTrhyaJ9TgRuiuHQRbLijxsTFIMeecfFGKg==,
+      }
+    engines: { node: ^18.20.2 || >=20.9.0 }
     peerDependencies:
       payload: 3.72.0
 
@@ -6598,6 +6610,13 @@ packages:
         integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==,
       }
 
+  nodemailer@7.0.12:
+    resolution:
+      {
+        integrity: sha512-H+rnK5bX2Pi/6ms3sN4/jRQvYSMltV6vqup/0SFOrxYYY/qoNvhXPlYq3e+Pm9RFJRwrMGbMIwi81M4dxpomhA==,
+      }
+    engines: { node: '>=6.0.0' }
+
   noms@0.0.0:
     resolution:
       {
@@ -10087,6 +10106,11 @@ snapshots:
       - sql.js
       - sqlite3
 
+  '@payloadcms/email-nodemailer@3.72.0(payload@3.72.0(graphql@16.12.0)(typescript@5.7.3))':
+    dependencies:
+      nodemailer: 7.0.12
+      payload: 3.72.0(graphql@16.12.0)(typescript@5.7.3)
+
   '@payloadcms/graphql@3.72.0(graphql@16.12.0)(payload@3.72.0(graphql@16.12.0)(typescript@5.7.3))(typescript@5.7.3)':
     dependencies:
       graphql: 16.12.0
@@ -12986,6 +13010,8 @@ snapshots:
       whatwg-url: 5.0.0
 
   node-releases@2.0.27: {}
+
+  nodemailer@7.0.12: {}
 
   noms@0.0.0:
     dependencies:

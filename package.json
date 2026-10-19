@@ -33,6 +33,7 @@
   "dependencies": {
     "@payloadcms/admin-bar": "3.72.0",
     "@payloadcms/db-postgres": "3.72.0",
+    "@payloadcms/email-nodemailer": "3.72.0",
     "@payloadcms/live-preview-react": "3.72.0",
     "@payloadcms/next": "3.72.0",
     "@payloadcms/plugin-form-builder": "3.72.0",
