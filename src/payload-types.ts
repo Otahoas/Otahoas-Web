@@ -117,11 +117,13 @@ export interface Config {
     header: Header;
     footer: Footer;
     'reservation-settings': ReservationSetting;
+    'reservation-emails': ReservationEmail;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     'reservation-settings': ReservationSettingsSelect<false> | ReservationSettingsSelect<true>;
+    'reservation-emails': ReservationEmailsSelect<false> | ReservationEmailsSelect<true>;
   };
   locale: 'fi' | 'en';
   user: User & {
@@ -1202,6 +1204,14 @@ export interface AccessRequestSubmission {
    */
   decidedBy?: string | null;
   decidedByTelegramId?: string | null;
+  /**
+   * From the keyholder tab at the time of the decision. Sent to the requester as a contact.
+   */
+  decidedByEmail?: string | null;
+  /**
+   * Telegram username of the decider, sent to the requester as a contact.
+   */
+  decidedByTelegram?: string | null;
   decidedAt?: string | null;
   declineReason?: string | null;
   /**
@@ -1236,6 +1246,18 @@ export interface AccessRequestSubmission {
   calendarSyncStatus?: ('not-written' | 'written' | 'failed') | null;
   calendarError?: string | null;
   errorMessage?: string | null;
+  /**
+   * Every email sent to the requester about this reservation, oldest first.
+   */
+  requesterEmails?:
+    | {
+        type: 'received' | 'accepted' | 'declined';
+        status: 'sent' | 'failed' | 'not-configured';
+        at: string;
+        error?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2038,6 +2060,8 @@ export interface AccessRequestSubmissionsSelect<T extends boolean = true> {
   status?: T;
   decidedBy?: T;
   decidedByTelegramId?: T;
+  decidedByEmail?: T;
+  decidedByTelegram?: T;
   decidedAt?: T;
   declineReason?: T;
   overlapWarning?: T;
@@ -2051,6 +2075,15 @@ export interface AccessRequestSubmissionsSelect<T extends boolean = true> {
   calendarSyncStatus?: T;
   calendarError?: T;
   errorMessage?: T;
+  requesterEmails?:
+    | T
+    | {
+        type?: T;
+        status?: T;
+        at?: T;
+        error?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2426,6 +2459,55 @@ export interface ReservationSetting {
   createdAt?: string | null;
 }
 /**
+ * Emails sent to the person who made a reservation request. Each is sent in the language the request was made in; write both the Suomi and English versions.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservation-emails".
+ */
+export interface ReservationEmail {
+  id: number;
+  /**
+   * Where replies go when there is no contact person yet: the "request received" email, and a decision by someone without an email in the keyholder tab. Accept and decline emails otherwise reply to the person who decided. Defaults to otahoas@otahoas.fi.
+   */
+  replyTo?: string | null;
+  /**
+   * Closing text at the end of every email, below a line: who we are and how to reach the committee. Email addresses and https:// links become clickable. Leave empty for the built-in text.
+   */
+  signature?: string | null;
+  received?: {
+    /**
+     * Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}
+     */
+    subject?: string | null;
+    /**
+     * Opening text above the reservation details. Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}
+     */
+    intro?: string | null;
+  };
+  accepted?: {
+    /**
+     * Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     */
+    subject?: string | null;
+    /**
+     * Opening text above the reservation details. Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     */
+    intro?: string | null;
+  };
+  declined?: {
+    /**
+     * Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     */
+    subject?: string | null;
+    /**
+     * Opening text above the reservation details. Leave empty for the built-in text. Placeholders: {name}, {space}, {start}, {end}, {decidedBy}
+     */
+    intro?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2482,6 +2564,35 @@ export interface ReservationSettingsSelect<T extends boolean = true> {
   generalCalendarId?: T;
   keyholderCache?: T;
   keyholderCacheUpdatedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservation-emails_select".
+ */
+export interface ReservationEmailsSelect<T extends boolean = true> {
+  replyTo?: T;
+  signature?: T;
+  received?:
+    | T
+    | {
+        subject?: T;
+        intro?: T;
+      };
+  accepted?:
+    | T
+    | {
+        subject?: T;
+        intro?: T;
+      };
+  declined?:
+    | T
+    | {
+        subject?: T;
+        intro?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

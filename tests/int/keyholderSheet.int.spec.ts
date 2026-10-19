@@ -24,6 +24,7 @@ describe('parseKeyholderSheet', () => {
         username: 'matti',
         telegramUserId: '111',
         isCommittee: false,
+        email: '',
       },
       {
         rowNumber: 3,
@@ -31,6 +32,7 @@ describe('parseKeyholderSheet', () => {
         username: 'anna',
         telegramUserId: '',
         isCommittee: true,
+        email: '',
       },
     ])
   })
@@ -49,8 +51,18 @@ describe('parseKeyholderSheet', () => {
         username: 'matti',
         telegramUserId: '',
         isCommittee: true,
+        email: 'matti@example.com',
       },
     ])
+  })
+
+  it('reads the email column by its other spellings', () => {
+    const sheet = parseKeyholderSheet([
+      ['Nimi', 'Telegram', 'Email'],
+      ['A', '@a', ' a@example.com '],
+    ])
+
+    expect(sheet.rows[0].email).toBe('a@example.com')
   })
 
   it('accepts the Finnish header spellings and several truthy markers', () => {

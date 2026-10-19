@@ -64,6 +64,8 @@ export const AccessRequestSubmissions: CollectionConfig = {
       },
     },
     {
+      // Despite the name, this tracks the Telegram notification; the field
+      // predates Telegram. Emails to the requester are in requesterEmails.
       name: 'emailStatus',
       type: 'select',
       defaultValue: 'pending',
@@ -104,6 +106,23 @@ export const AccessRequestSubmissions: CollectionConfig = {
       type: 'text',
       admin: {
         readOnly: true,
+      },
+    },
+    {
+      name: 'decidedByEmail',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description:
+          'From the keyholder tab at the time of the decision. Sent to the requester as a contact.',
+      },
+    },
+    {
+      name: 'decidedByTelegram',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Telegram username of the decider, sent to the requester as a contact.',
       },
     },
     {
@@ -225,6 +244,51 @@ export const AccessRequestSubmissions: CollectionConfig = {
         readOnly: true,
         condition: (data) => data?.emailStatus === 'failed',
       },
+    },
+    {
+      name: 'requesterEmails',
+      type: 'array',
+      label: 'Emails to the requester',
+      admin: {
+        readOnly: true,
+        description: 'Every email sent to the requester about this reservation, oldest first.',
+      },
+      fields: [
+        {
+          name: 'type',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Received', value: 'received' },
+            { label: 'Accepted', value: 'accepted' },
+            { label: 'Declined', value: 'declined' },
+          ],
+        },
+        {
+          name: 'status',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Sent', value: 'sent' },
+            { label: 'Failed', value: 'failed' },
+            { label: 'Not configured', value: 'not-configured' },
+          ],
+        },
+        {
+          name: 'at',
+          type: 'date',
+          required: true,
+          admin: {
+            date: {
+              pickerAppearance: 'dayAndTime',
+            },
+          },
+        },
+        {
+          name: 'error',
+          type: 'text',
+        },
+      ],
     },
   ],
   timestamps: true,

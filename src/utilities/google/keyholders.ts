@@ -33,6 +33,8 @@ export interface KeyholderRow {
   username: string
   telegramUserId: string
   isCommittee: boolean
+  /** Given to requesters as the decider's contact, so may be empty. */
+  email: string
 }
 
 /**
@@ -44,6 +46,7 @@ const HEADERS = {
   committee: ['atmk-jasen', 'atmk jasen', 'atmkjasen', 'committee'],
   username: ['telegram'],
   userId: ['telegram id', 'telegram id (automaattinen)', 'telegram uuid', 'telegram user id'],
+  email: ['sahkoposti', 'email', 'e-mail', 'sposti'],
 }
 
 /** Lowercase, collapse whitespace, and fold the Finnish vowels so "ATMK-jäsen" matches. */
@@ -96,6 +99,7 @@ export const parseKeyholderSheet = (values: unknown[][], tab = 'keyholders'): Ke
   const usernameIndex = findColumn(headers, HEADERS.username)
   const userIdIndex = findColumn(headers, HEADERS.userId)
   const committeeIndex = findColumn(headers, HEADERS.committee)
+  const emailIndex = findColumn(headers, HEADERS.email)
 
   if (nameIndex === -1 || usernameIndex === -1) {
     throw new Error(`Keyholder tab "${tab}" needs at least "Nimi" and "Telegram" columns`)
@@ -125,6 +129,7 @@ export const parseKeyholderSheet = (values: unknown[][], tab = 'keyholders'): Ke
       username: normalizeUsername(cell(row, usernameIndex)),
       telegramUserId: telegramUserId(row),
       isCommittee: isTruthy(cell(row, committeeIndex)),
+      email: cell(row, emailIndex),
     }))
     .filter((row) => row.name || row.username || row.telegramUserId)
 

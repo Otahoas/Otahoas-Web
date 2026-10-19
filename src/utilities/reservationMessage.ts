@@ -136,8 +136,18 @@ export const buildDecidedMessage = (args: {
   declineReason?: string
   sheetFailed?: boolean
   calendarFailed?: boolean
+  emailFailed?: boolean
 }): string => {
-  const { body, status, decidedBy, decidedAt, declineReason, sheetFailed, calendarFailed } = args
+  const {
+    body,
+    status,
+    decidedBy,
+    decidedAt,
+    declineReason,
+    sheetFailed,
+    calendarFailed,
+    emailFailed,
+  } = args
 
   const header =
     status === 'accepted'
@@ -154,6 +164,12 @@ export const buildDecidedMessage = (args: {
   // still showing in the calendar, which misleads anyone looking at it.
   if (calendarFailed) {
     lines.push('⚠️ <i>Could not update the calendar — it may still show the old state.</i>')
+  }
+
+  // The requester otherwise never hears of the decision, so whoever decided
+  // needs to tell them by hand.
+  if (emailFailed) {
+    lines.push('⚠️ <i>Could not email the requester — please let them know yourself.</i>')
   }
 
   if (status === 'declined' && declineReason) {

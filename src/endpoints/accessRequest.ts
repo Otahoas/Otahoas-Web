@@ -1,5 +1,4 @@
 import type { PayloadHandler } from 'payload'
-import type { ReservationTarget } from '@/payload-types'
 import { sendTelegramMessageWithResult, isTelegramConfigured } from '@/utilities/telegram'
 import {
   buildDecisionKeyboard,
@@ -10,126 +9,7 @@ import {
 import { recordPendingReservation } from '@/utilities/reservationSheet'
 import { findOverlappingRequests, parseRange } from '@/utilities/reservationOverlap'
 import { syncAndRecordCalendar } from '@/utilities/reservationCalendar'
-
-const _buildEmailContent = (
-  data: AccessRequestBody,
-  target: ReservationTarget,
-  language: 'fi' | 'en',
-): { subject: string; html: string; text: string } => {
-  const targetLabel = language === 'fi' ? target.labelFi : target.labelEn
-
-  const subject =
-    language === 'fi' ? `Käyttöpyyntö: ${targetLabel}` : `Access Request: ${targetLabel}`
-
-  const labels =
-    language === 'fi'
-      ? {
-          title: 'Käyttöpyyntö',
-          target: 'Kohde',
-          name: 'Nimi',
-          email: 'Sähköposti',
-          phone: 'Puhelin',
-          telegram: 'Telegram',
-          address: 'Osoite',
-          association: 'Yhdistys',
-          associationName: 'Yhdistyksen nimi',
-          startDate: 'Alkupäivä',
-          endDate: 'Loppupäivä',
-          startTime: 'Alkuaika',
-          endTime: 'Loppuaika',
-          participants: 'Osallistujat',
-          useType: 'Käyttötarkoitus',
-          details: 'Lisätiedot',
-          isPublicEvent: 'Yleinen tilaisuus',
-          publicEventName: 'Tapahtuman nimi',
-          associationYes: 'Kyllä, yhdistyksen puolesta',
-          associationNo: 'Ei, henkilökohtainen varaus',
-          isPublicEventYes: 'Kyllä',
-          isPublicEventNo: 'Ei',
-        }
-      : {
-          title: 'Access Request',
-          target: 'Target',
-          name: 'Name',
-          email: 'Email',
-          phone: 'Phone',
-          telegram: 'Telegram',
-          address: 'Address',
-          association: 'Association',
-          associationName: 'Association name',
-          startDate: 'Start Date',
-          endDate: 'End Date',
-          startTime: 'Start Time',
-          endTime: 'End Time',
-          participants: 'Participants',
-          useType: 'Use Type',
-          details: 'Additional Details',
-          isPublicEvent: 'Open event',
-          publicEventName: 'Event name',
-          associationYes: 'Yes, on behalf of an association',
-          associationNo: 'No, individual booking',
-          isPublicEventYes: 'Yes',
-          isPublicEventNo: 'No',
-        }
-
-  const associationValue =
-    data.association === 'yes'
-      ? `${labels.associationYes}${data.associationName ? ` — ${data.associationName}` : ''}`
-      : data.association === 'no'
-        ? labels.associationNo
-        : undefined
-
-  const publicEventValue =
-    data.isPublicEvent === 'yes'
-      ? `${labels.isPublicEventYes}${data.publicEventName ? ` — ${data.publicEventName}` : ''}`
-      : data.isPublicEvent === 'no'
-        ? labels.isPublicEventNo
-        : undefined
-
-  const rows = [
-    { label: labels.target, value: targetLabel },
-    { label: labels.name, value: data.name },
-    { label: labels.email, value: data.email },
-    { label: labels.phone, value: data.phone },
-    { label: labels.telegram, value: data.telegram },
-    { label: labels.address, value: data.address },
-    { label: labels.association, value: associationValue },
-    { label: labels.startDate, value: formatDateFinnish(data.startDate) },
-    { label: labels.endDate, value: formatDateFinnish(data.endDate) },
-    { label: labels.startTime, value: data.startTime },
-    { label: labels.endTime, value: data.endTime },
-    { label: labels.participants, value: data.participants?.toString() },
-    { label: labels.useType, value: data.useType },
-    { label: labels.details, value: data.details },
-    { label: labels.isPublicEvent, value: publicEventValue },
-  ].filter((row) => row.value)
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    h1 { color: #2563eb; }
-    table { border-collapse: collapse; width: 100%; max-width: 600px; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-    th { background-color: #f3f4f6; width: 30%; }
-  </style>
-</head>
-<body>
-  <h1>${labels.title}: ${targetLabel}</h1>
-  <table>
-    ${rows.map((row) => `<tr><th>${row.label}</th><td>${row.value}</td></tr>`).join('\n    ')}
-  </table>
-</body>
-</html>
-  `.trim()
-
-  const text = `${labels.title}: ${targetLabel}\n\n${rows.map((row) => `${row.label}: ${row.value}`).join('\n')}`
-
-  return { subject, html, text }
-}
+import { sendReservationEmail } from '@/utilities/reservationEmail'
 
 export const accessRequestHandler: PayloadHandler = async (req) => {
   const { payload } = req
@@ -307,6 +187,10 @@ export const accessRequestHandler: PayloadHandler = async (req) => {
           data: { sheetSyncStatus: 'failed', sheetError },
         })
       }
+
+      // A confirmation the request arrived. A failure is recorded on the
+      // submission but does not fail the request, which already reached Telegram.
+      await sendReservationEmail({ payload, submission, target, type: 'received' })
 
       return Response.json({
         success: true,
